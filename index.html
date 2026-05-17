@@ -358,17 +358,19 @@ async function loadData() {
   setSyncStatus('loading','Loading…');
   try {
     const r = await fetch(BIN_URL + '/latest', {
+      method: 'GET',
+      mode: 'cors',
       headers: { 'X-Master-Key': BIN_KEY, 'X-Bin-Meta': 'false' }
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
-    // JSONbin wraps in record key
     const d = data.record || data;
-    if (d.procurement)  state.procurement  = d.procurement;
-    if (d.installation) state.installation = d.installation;
-    if (d.jason)        state.jason        = d.jason;
-    if (d.leah)         state.leah         = d.leah;
-    if (d.notes)        state.notes        = d.notes;
+    // Only load if keys exist and are arrays
+    if (Array.isArray(d.procurement))  state.procurement  = d.procurement;
+    if (Array.isArray(d.installation)) state.installation = d.installation;
+    if (Array.isArray(d.jason))        state.jason        = d.jason;
+    if (Array.isArray(d.leah))         state.leah         = d.leah;
+    if (Array.isArray(d.notes))        state.notes        = d.notes;
     setSyncStatus('saved', 'Loaded · ' + tsNow());
   } catch(e) {
     console.error('Load error:', e);
