@@ -37,8 +37,9 @@ header{background:var(--ink);padding:14px 16px 12px;border-bottom:1px solid var(
 
 nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 nav::-webkit-scrollbar{display:none;}
-.nav-btn{flex-shrink:0;background:none;border:none;border-bottom:3px solid transparent;padding:13px 16px 11px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.04em;color:var(--mid);cursor:pointer;white-space:nowrap;}
+.nav-btn{flex-shrink:0;background:none;border:none;border-bottom:3px solid transparent;padding:13px 16px 11px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.04em;color:var(--mid);cursor:pointer;white-space:nowrap;position:relative;}
 .nav-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-badge{position:absolute;top:8px;right:4px;background:var(--red);color:white;border-radius:10px;font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;line-height:14px;}
 
 main{padding:16px;max-width:800px;margin:0 auto;}
 .panel{display:none;}.panel.active{display:block;}
@@ -93,13 +94,15 @@ main{padding:16px;max-width:800px;margin:0 auto;}
 
 .bucket-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
 .bucket-hd{background:var(--parchment);padding:12px 14px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);border-bottom:1px solid var(--border);}
-.task-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.task-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
 .task-row:last-child{border-bottom:none;}
 .task-check{width:20px;height:20px;flex-shrink:0;border:2px solid var(--warm);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px;}
 .task-row.done .task-check{background:var(--green);border-color:var(--green);color:white;}
 .task-row.done .task-text{text-decoration:line-through;color:var(--warm);}
-.task-text{flex:1;font-size:13px;line-height:1.4;}
-.task-del{background:none;border:none;color:var(--warm);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;}
+.task-text{flex:1;font-size:13px;line-height:1.4;word-break:break-word;min-width:0;}
+.task-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-left:4px;}
+.task-del{background:none;border:1px solid #f0d8d4;color:var(--red);border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.task-edit-btn{background:none;border:1px solid var(--border);color:var(--mid);border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;white-space:nowrap;}
 .quick-add-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bone);}
 .quick-input{flex:1;background:var(--white);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);outline:none;}
 .quick-input::placeholder{color:var(--warm);}
@@ -164,6 +167,7 @@ main{padding:16px;max-width:800px;margin:0 auto;}
   <button class="nav-btn" onclick="switchPanel('timeline')">Timeline</button>
   <button class="nav-btn" onclick="switchPanel('jason')">Jason</button>
   <button class="nav-btn" onclick="switchPanel('leah')">Leah</button>
+  <button class="nav-btn" onclick="switchPanel('thomas')">Thomas</button>
   <button class="nav-btn" onclick="switchPanel('notes')">Log</button>
 </nav>
 
@@ -259,6 +263,12 @@ main{padding:16px;max-width:800px;margin:0 auto;}
     <div id="leah-grid"></div>
   </div>
 
+  <!-- THOMAS -->
+  <div class="panel" id="panel-thomas">
+    <div class="section-hd"><h2>Thomas</h2><p>Decisions · actions · FYIs · reminders</p></div>
+    <div id="thomas-grid"></div>
+  </div>
+
   <!-- LOG -->
   <div class="panel" id="panel-notes">
     <div class="section-hd"><h2>Operations Log</h2><p>Calls · site observations · decisions · issues</p></div>
@@ -346,12 +356,78 @@ const BIN_KEY = '$2a$10$9tf.fGgTka3LRnMHcUN/f.IgPa8RbCEaoWdJ3yFXQo2m.20c1YgDe';
 const BIN_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID;
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-let state = { procurement:[], installation:[], jason:[], leah:[], notes:[] };
+let state = { procurement:[], installation:[], jason:[], leah:[], thomas:[], notes:[] };
 let saveTimer = null;
 let isSaving  = false;
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function tsNow() { return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); }
+
+// ─── NOTIFICATION BADGES ──────────────────────────────────────────────────────
+// Tracks which item IDs this browser has already seen
+const SEEN_KEY = 'cv_seen_ids';
+
+function getSeenIds() {
+  try { return new Set(JSON.parse(localStorage.getItem(SEEN_KEY)||'[]')); }
+  catch(e) { return new Set(); }
+}
+function markSeen(ids) {
+  try {
+    const seen = getSeenIds();
+    ids.forEach(id => seen.add(id));
+    localStorage.setItem(SEEN_KEY, JSON.stringify([...seen]));
+  } catch(e) {}
+}
+function countUnseen(items) {
+  const seen = getSeenIds();
+  return items.filter(i => i.id && !seen.has(i.id)).length;
+}
+
+function updateBadges() {
+  const tabs = [
+    { name:'procurement', items: state.procurement },
+    { name:'installation', items: state.installation },
+    { name:'jason',  items: state.jason },
+    { name:'leah',   items: state.leah },
+    { name:'thomas', items: state.thomas },
+    { name:'notes',  items: state.notes },
+  ];
+  const buttons = document.querySelectorAll('.nav-btn');
+  const panelOrder = ['procurement','installation','timeline','jason','leah','thomas','notes'];
+
+  tabs.forEach(tab => {
+    const idx = panelOrder.indexOf(tab.name);
+    if (idx === -1) return;
+    const btn = buttons[idx];
+    if (!btn) return;
+    // Remove existing badge
+    const existing = btn.querySelector('.nav-badge');
+    if (existing) existing.remove();
+    const count = countUnseen(tab.items);
+    if (count > 0) {
+      const badge = document.createElement('span');
+      badge.className = 'nav-badge';
+      badge.textContent = count;
+      btn.appendChild(badge);
+    }
+  });
+}
+
+function markTabSeen(name) {
+  const map = {
+    procurement: state.procurement,
+    installation: state.installation,
+    jason: state.jason,
+    leah: state.leah,
+    thomas: state.thomas,
+    notes: state.notes,
+  };
+  const items = map[name];
+  if (items) {
+    markSeen(items.map(i => i.id).filter(Boolean));
+    updateBadges();
+  }
+}
 
 // ─── JSONBIN IO ───────────────────────────────────────────────────────────────
 async function loadData() {
@@ -370,8 +446,10 @@ async function loadData() {
     if (Array.isArray(d.installation)) state.installation = d.installation;
     if (Array.isArray(d.jason))        state.jason        = d.jason;
     if (Array.isArray(d.leah))         state.leah         = d.leah;
+    if (Array.isArray(d.thomas))       state.thomas       = d.thomas;
     if (Array.isArray(d.notes))        state.notes        = d.notes;
     setSyncStatus('saved', 'Loaded · ' + tsNow());
+    updateBadges();
   } catch(e) {
     console.error('Load error:', e);
     setSyncStatus('error', 'Load failed: ' + e.message);
@@ -422,11 +500,13 @@ function switchPanel(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  const idx=['procurement','installation','timeline','jason','leah','notes'].indexOf(name);
+  const idx=['procurement','installation','timeline','jason','leah','thomas','notes'].indexOf(name);
   document.querySelectorAll('.nav-btn')[idx].classList.add('active');
   if(name==='timeline') renderTimeline();
   if(name==='jason')    renderPerson('jason');
   if(name==='leah')     renderPerson('leah');
+  if(name==='thomas')   renderPerson('thomas');
+  markTabSeen(name);
 }
 
 // ─── PROCUREMENT ──────────────────────────────────────────────────────────────
@@ -532,7 +612,7 @@ function saveProc(){
   } else {
     state.procurement.push(item);
   }
-  save(); closeModal('proc'); renderProc();
+  save(); closeModal('proc'); renderProc(); updateBadges();
 }
 function editProc(id){
   const i=state.procurement.find(x=>x.id===id); if(!i) return;
@@ -613,7 +693,7 @@ function saveInst(){
   } else {
     state.installation.push(item);
   }
-  save(); closeModal('inst'); renderInst();
+  save(); closeModal('inst'); renderInst(); updateBadges();
 }
 function editInst(id){
   const i=state.installation.find(x=>x.id===id); if(!i) return;
@@ -661,10 +741,13 @@ function renderPerson(person){
     const listEl=document.getElementById(`${person}-${bucket.key}-list`);
     if(!items.length){listEl.innerHTML='<div class="empty-state" style="padding:16px">None yet.</div>';return;}
     listEl.innerHTML=items.map(i=>`
-      <div class="task-row ${i.done?'done':''}" onclick="togglePerson('${person}','${i.id}')">
-        <div class="task-check">${i.done?'✓':''}</div>
-        <div style="flex:1"><div class="task-text">${esc(i.text)}</div></div>
-        <button class="task-del" onclick="event.stopPropagation();deletePersonItem('${person}','${i.id}')">×</button>
+      <div class="task-row ${i.done?'done':''}">
+        <div class="task-check" onclick="togglePerson('${person}','${i.id}')">${i.done?'✓':''}</div>
+        <div style="flex:1;min-width:0"><div class="task-text">${linkify(i.text)}</div></div>
+        <div class="task-actions">
+          <button class="task-edit-btn" onclick="editPersonItem('${person}','${i.id}')">Edit</button>
+          <button class="task-del" onclick="deletePersonItem('${person}','${i.id}')">Del</button>
+        </div>
       </div>`).join('');
   });
 }
@@ -673,7 +756,16 @@ function quickAddPerson(person,bucket){
   const text=el.value.trim(); if(!text) return;
   if(!state[person]) state[person]=[];
   state[person].push({id:uid(),text,bucket,done:false});
-  el.value=''; save(); renderPerson(person);
+  el.value=''; save(); renderPerson(person); updateBadges();
+}
+function editPersonItem(person, id) {
+  const item = (state[person]||[]).find(i=>i.id===id);
+  if (!item) return;
+  const newText = prompt('Edit item:', item.text);
+  if (newText === null) return;
+  item.text = newText.trim();
+  save();
+  renderPerson(person);
 }
 function togglePerson(person,id){
   const item=(state[person]||[]).find(i=>i.id===id);
@@ -692,7 +784,7 @@ function addNote(){
   if(!state.notes) state.notes=[];
   state.notes.unshift({id:uid(),text,cat,ts});
   document.getElementById('note-text').value='';
-  save(); renderNotes();
+  save(); renderNotes(); updateBadges();
 }
 function renderNotes(){
   const el=document.getElementById('notes-log');
@@ -700,10 +792,28 @@ function renderNotes(){
   el.innerHTML=state.notes.slice(0,80).map(n=>{
     const ts=n.ts?new Date(n.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
     return`<div class="log-entry">
-      <div class="log-entry-meta">${ts}${n.cat?' · '+n.cat:''}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;">
+        <div class="log-entry-meta" style="margin-bottom:0">${ts}${n.cat?' · '+n.cat:''}</div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="task-edit-btn" onclick="editNote('${n.id}')">Edit</button>
+          <button class="task-del" onclick="deleteNote('${n.id}')">Del</button>
+        </div>
+      </div>
       <div class="log-entry-text">${linkify(n.text)}</div>
     </div>`;
   }).join('');
+}
+function editNote(id){
+  const n=state.notes.find(i=>i.id===id); if(!n) return;
+  const newText=prompt('Edit log entry:',n.text);
+  if(newText===null) return;
+  n.text=newText.trim();
+  save(); renderNotes();
+}
+function deleteNote(id){
+  if(!confirm('Delete this log entry?')) return;
+  state.notes=state.notes.filter(i=>i.id!==id);
+  save(); renderNotes();
 }
 
 // ─── TIMELINE ─────────────────────────────────────────────────────────────────
@@ -724,7 +834,8 @@ function renderTimeline(){
   minD.setDate(minD.getDate()-5);maxD.setDate(maxD.getDate()+10);
   const totalDays=(maxD-minD)/86400000;
   const LW=150,PT=50,PB=20,ROW=46;
-  const W=Math.max(window.innerWidth-32,500);
+  const isMobile = window.innerWidth < 600;
+  const W=Math.max(window.innerWidth-32,300);
   const CW=W-LW-8,H=PT+items.length*ROW+PB;
   const dpr=window.devicePixelRatio||1;
   canvas.width=W*dpr;canvas.height=H*dpr;
@@ -738,32 +849,42 @@ function renderTimeline(){
     return'#c8bfad';
   }
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  // Draw date labels — every 2 weeks on mobile, every week on desktop
+  const interval = isMobile ? 14 : 7;
   const gc=new Date(minD);gc.setDate(1);
-  ctx.font='10px Inter,sans-serif';ctx.textAlign='center';
+  ctx.font='9px Inter,sans-serif';ctx.textAlign='center';
+  let lastLabelX = -50;
   while(gc<=maxD){
     const x=dx(gc);
     if(x>=LW&&x<=W){
       ctx.fillStyle='rgba(0,0,0,0.05)';ctx.fillRect(x,0,1,H);
-      ctx.fillStyle='#7a7060';
-      ctx.fillText(gc.toLocaleDateString('en-US',{month:'short',day:'numeric'}),x,16);
+      // Only draw label if far enough from last one
+      if (x - lastLabelX > 40) {
+        ctx.fillStyle='#7a7060';
+        ctx.fillText(gc.toLocaleDateString('en-US',{month:'short',day:'numeric'}),x,14);
+        lastLabelX = x;
+      }
     }
-    gc.setDate(gc.getDate()+7);
+    gc.setDate(gc.getDate()+interval);
   }
   const tx=dx(today);
   ctx.strokeStyle='rgba(184,148,74,0.7)';ctx.lineWidth=2;ctx.setLineDash([5,4]);
-  ctx.beginPath();ctx.moveTo(tx,24);ctx.lineTo(tx,H);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#b8944a';ctx.font='bold 9px Inter,sans-serif';ctx.textAlign='center';
-  ctx.fillText('TODAY',tx,26);
+  ctx.beginPath();ctx.moveTo(tx,22);ctx.lineTo(tx,H);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#b8944a';ctx.font='bold 8px Inter,sans-serif';ctx.textAlign='center';
+  ctx.fillText('TODAY',tx,20);
   ctx.fillStyle='#f5f0e8';ctx.fillRect(0,0,LW,H);
   ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(LW-1,0,1,H);
   const bars=[];
   items.forEach((item,idx)=>{
-    const y=PT+idx*ROW,mid=y+ROW/2,barH=20,barY=mid-barH/2;
+    const y=PT+idx*ROW,mid=y+ROW/2,barH=18,barY=mid-barH/2;
     if(idx%2===0){ctx.fillStyle='rgba(237,232,220,0.3)';ctx.fillRect(LW,y,CW,ROW);}
     ctx.fillStyle='rgba(0,0,0,0.04)';ctx.fillRect(0,y+ROW-1,W,1);
-    ctx.fillStyle='#1a1612';ctx.font='500 12px Inter,sans-serif';ctx.textAlign='left';
-    const lbl=(item.item||'').slice(0,17)+((item.item||'').length>17?'…':'');
-    ctx.fillText(lbl,10,mid+4);
+    ctx.fillStyle='#1a1612';
+    const fontSize = isMobile ? 10 : 12;
+    ctx.font=`500 ${fontSize}px Inter,sans-serif`;ctx.textAlign='left';
+    const maxChars = isMobile ? 12 : 17;
+    const lbl=(item.item||'').slice(0,maxChars)+((item.item||'').length>maxChars?'…':'');
+    ctx.fillText(lbl,6,mid+4);
     ctx.fillStyle=barClr(item.status);
     ctx.beginPath();ctx.arc(LW-8,mid,4,0,Math.PI*2);ctx.fill();
     const hasO=item.orderDate,hasE=item.etaDate;
