@@ -804,8 +804,13 @@ function fmtDate(d){if(!d)return'—';return new Date(d+'T12:00:00').toLocaleDat
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 function linkify(text) {
   if (!text) return '';
+  // Escape first, then find URLs and make them clickable
   const escaped = esc(text);
-  return escaped.replace(/(https?:\/\/[^\s&lt;&gt;"]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--gold);word-break:break-all;text-decoration:underline;">$1</a>');
+  return escaped.replace(/(https?:\/\/[^\s<>"]+)/g, function(url) {
+    // Clean up any trailing punctuation
+    const clean = url.replace(/[.,;!?)]+$/, '');
+    return '<a href="' + clean + '" target="_blank" rel="noopener noreferrer" style="color:var(--gold);word-break:break-all;text-decoration:underline;-webkit-touch-callout:default;">' + clean + '</a>';
+  });
 }
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function slug(s){return(s||'').toLowerCase().replace(/ /g,'-');}
