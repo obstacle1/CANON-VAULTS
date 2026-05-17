@@ -471,7 +471,7 @@ function renderProc(){
           ${i.vendor?`<span style="font-size:11px;color:var(--mid)">${esc(i.vendor)}</span>`:''}
         </div>
         ${i.eta||i.etaDate?`<div class="item-card-note">📦 ${i.eta?esc(i.eta):''}${i.etaDate?' · ETA '+fmtDate(i.etaDate):''}</div>`:''}
-        ${i.notes?`<div class="item-card-note">${esc(i.notes).slice(0,120)}${(i.notes||'').length>120?'…':''}</div>`:''}
+        ${i.notes?`<div class="item-card-note">${linkify(i.notes.slice(0,300))}${(i.notes||'').length>300?'…':''}</div>`:''}
         <div class="item-card-actions">
           <button class="btn-edit" onclick="editProc('${i.id}')">Edit</button>
           <button class="btn-del" onclick="deleteProcItem('${i.id}')">Delete</button>
@@ -580,7 +580,7 @@ function renderInst(){
         </div>
         ${i.date?`<div class="item-card-note">📅 ${esc(i.date)}</div>`:''}
         ${i.deps?`<div class="item-card-note">↳ ${esc(i.deps)}</div>`:''}
-        ${i.notes?`<div class="item-card-note">${esc(i.notes).slice(0,120)}</div>`:''}
+        ${i.notes?`<div class="item-card-note">${linkify(i.notes.slice(0,300))}</div>`:''}
         <div class="item-card-actions">
           <button class="btn-edit" onclick="editInst('${i.id}')">Edit</button>
           <button class="btn-del" onclick="deleteInstItem('${i.id}')">Delete</button>
@@ -699,7 +699,7 @@ function renderNotes(){
     const ts=n.ts?new Date(n.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
     return`<div class="log-entry">
       <div class="log-entry-meta">${ts}${n.cat?' · '+n.cat:''}</div>
-      <div class="log-entry-text">${esc(n.text)}</div>
+      <div class="log-entry-text">${linkify(n.text)}</div>
     </div>`;
   }).join('');
 }
@@ -800,6 +800,11 @@ function renderTimeline(){
 function fmtDate(d){if(!d)return'—';return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
+function linkify(text) {
+  if (!text) return '';
+  const escaped = esc(text);
+  return escaped.replace(/(https?:\/\/[^\s&lt;&gt;"]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--gold);word-break:break-all;text-decoration:underline;">$1</a>');
+}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function slug(s){return(s||'').toLowerCase().replace(/ /g,'-');}
 function shortCat(c){return({'Vault Infrastructure':'Vault','101 Society Lounge':'101 Soc','Security & Access':'Security','FF&E':'FF&E','Climate & Mechanical':'Climate','Bar & Wine':'Bar','Signage & Identity':'Signage'}[c])||c||'—';}
