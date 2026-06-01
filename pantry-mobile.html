@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pantry — Canon Vaults</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Libre+Baskerville:ital@0;1&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f0e8; font-family: 'Courier Prime', monospace; color: #1a1612; }
+
+  /* ── HEADER ── */
+  .header {
+    background: #1a1612;
+    color: #f5f0e8;
+    padding: 16px 18px 12px;
+  }
+  .header h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .header .sub { font-size: 10px; margin-top: 4px; color: #c8bfaa; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #1a1612;
+    background: #fdfaf4;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #8a7a66;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    font-family: 'Courier Prime', monospace;
+  }
+  .tab.active {
+    color: #1a1612;
+    border-bottom: 3px solid #1a1612;
+    font-weight: 700;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 16px; }
+  .panel.active { display: block; }
+
+  /* ── PLAN VIEW ── */
+  .plan-wrap {
+    background: #fff;
+    border: 1px solid #c8bfaa;
+    border-radius: 4px;
+    padding: 12px 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .plan-wrap svg { width: 100%; height: auto; display: block; }
+
+  /* ── LEGEND ── */
+  .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 2px; flex-shrink: 0; border: 1px solid #c8bfaa; }
+
+  /* ── DIMS TABLE ── */
+  .dims-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 16px; }
+  .dims-table td { padding: 7px 6px; border-bottom: 1px solid #e8e0d0; vertical-align: top; }
+  .dims-table td:first-child { color: #8a7a66; width: 50%; }
+
+  /* ── EQUIPMENT CARDS ── */
+  .eq-card {
+    background: #fff;
+    border: 1px solid #c8bfaa;
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .eq-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .eq-num {
+    background: #1a1612;
+    color: #f5f0e8;
+    font-size: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  .eq-name { font-size: 11px; font-weight: 700; flex: 1; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.3; }
+  .eq-price { font-size: 10px; background: #f0ece2; padding: 3px 7px; border-radius: 10px; white-space: nowrap; color: #5a4f3f; }
+  .eq-spec { font-size: 10px; color: #5a4f3f; font-style: italic; margin-bottom: 6px; line-height: 1.5; }
+  .eq-why { font-size: 10px; color: #5a4f3f; line-height: 1.6; margin-bottom: 10px; }
+  .eq-links { display: flex; flex-direction: column; gap: 6px; }
+  .eq-source-line {
+    font-size: 10px;
+    color: #5a4f3f;
+    padding: 6px 0;
+    border-bottom: 0.5px solid #e8e0d0;
+    line-height: 1.5;
+  }
+  .eq-source-label { color: #c8bfaa; margin-right: 4px; }
+  .eq-link-btn {
+    display: block;
+    padding: 8px 12px;
+    background: #f0ece2;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #1a1612;
+    text-decoration: none;
+    border: 1px solid #c8bfaa;
+    line-height: 1.4;
+  }
+  .eq-link-btn:active { background: #e0d8c8; }
+  .eq-link-source { font-size: 9px; color: #8a7a66; display: block; }
+
+  /* ── SECTION DIVIDERS ── */
+  .section-head {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #8a7a66;
+    padding: 12px 0 6px;
+    border-bottom: 1px solid #c8bfaa;
+    margin-bottom: 10px;
+  }
+
+  /* ── BUDGET BAR ── */
+  .budget-box {
+    background: #1a1612;
+    color: #f5f0e8;
+    border-radius: 4px;
+    padding: 14px;
+    margin-top: 4px;
+    font-size: 10px;
+    line-height: 1.9;
+  }
+  .budget-box strong { font-size: 12px; display: block; margin-bottom: 4px; }
+
+  /* ── SOURCES ── */
+  .source-link {
+    display: block;
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #c8bfaa;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #1a1612;
+    text-decoration: none;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .source-link span { color: #8a7a66; font-size: 9px; display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Canon Vaults — Pantry</h1>
+  <div class="sub">101 W. Canon Perdido St. · Santa Barbara · CV-PNT-002 · May 2026</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('plan', this)">Floor Plan</button>
+  <button class="tab" onclick="showTab('equipment', this)">Equipment</button>
+  <button class="tab" onclick="showTab('sources', this)">Sources</button>
+  <button class="tab" onclick="showTab('visit', this)">Visit</button>
+</div>
+
+<!-- ══════════════ PLAN TAB ══════════════ -->
+<div id="plan" class="panel active">
+
+  <div class="plan-wrap">
+    <!--
+      Room: 97"W × 247"L  |  scale 1"=2px → 194W × 494H
+      Wall 10px
+      Outer: x=30, y=16, w=194, h=494
+      Interior: x=40 to x=214, y=26 to y=500
+
+      BACK WALL (y=26, 48px deep):
+        DW:    48px W  x=40
+        Sink:  60px W  x=88
+        Table: 66px W  x=148 (fills to right wall)
+
+      RIGHT WALL (x=214, eq depth 48px → eq x=166):
+        Sandwich prep fridge: 96px  y=26
+        Table w drawers:      120px y=122
+        Small table:          48px  y=242
+
+      LEFT WALL (x=40, shelf depth 32px):
+        Shelf: y=74 to y=380 (full run after DW zone)
+
+      BUMP: x=40, y=380, w=32, h=120
+
+      DOOR: center bottom, 72px wide
+        x = 40 + (174/2) - 36 = 40+87-36 = 91
+        gap y=490–500
+    -->
+    <svg viewBox="0 0 264 560" xmlns="http://www.w3.org/2000/svg" font-family="Courier Prime, monospace">
+
+      <!-- Room -->
+      <rect x="30" y="16" width="194" height="494" fill="#1a1612"/>
+      <rect x="40" y="26" width="174" height="474" fill="#f8f5ee"/>
+      <!-- Door gap -->
+      <rect x="91" y="490" width="72" height="10" fill="#f8f5ee"/>
+
+      <!-- BACK WALL EQUIPMENT -->
+      <!-- DW -->
+      <rect x="40" y="26" width="48" height="48" fill="#dde4ee" stroke="#555" stroke-width="1"/>
+      <text x="64" y="48" font-size="8" fill="#1a1612" text-anchor="middle">DW</text>
+      <text x="64" y="58" font-size="7" fill="#555" text-anchor="middle">24"W</text>
+
+      <!-- Sink -->
+      <rect x="88" y="26" width="60" height="48" fill="#ddeedd" stroke="#555" stroke-width="1"/>
+      <rect x="92" y="30" width="52" height="40" rx="3" fill="#c4ddc4" stroke="#8aaa8a" stroke-width="1"/>
+      <circle cx="118" cy="50" r="5" fill="#8aaa8a"/>
+      <text x="118" y="70" font-size="7" fill="#555" text-anchor="middle">SINK 30"</text>
+
+      <!-- Back table -->
+      <rect x="148" y="26" width="66" height="48" fill="#d4dde8" stroke="#555" stroke-width="1"/>
+      <text x="181" y="50" font-size="7" fill="#1a1612" text-anchor="middle">TABLE</text>
+      <text x="181" y="60" font-size="6" fill="#555" text-anchor="middle">30"W</text>
+
+      <!-- RIGHT WALL EQUIPMENT (depth 48px, x=166) -->
+      <!-- Sandwich prep fridge -->
+      <rect x="166" y="74" width="48" height="96" fill="#d4eed4" stroke="#555" stroke-width="1"/>
+      <rect x="210" y="90" width="4" height="50" rx="2" fill="#8aaa8a"/>
+      <line x1="166" y1="98"  x2="214" y2="98"  stroke="#8aaa8a" stroke-width="0.75" stroke-dasharray="2,2"/>
+      <line x1="166" y1="122" x2="214" y2="122" stroke="#8aaa8a" stroke-width="0.75" stroke-dasharray="2,2"/>
+      <line x1="166" y1="146" x2="214" y2="146" stroke="#8aaa8a" stroke-width="0.75" stroke-dasharray="2,2"/>
+      <text x="190" y="112" font-size="7" fill="#1a1612" text-anchor="middle">PREP</text>
+      <text x="190" y="122" font-size="7" fill="#1a1612" text-anchor="middle">FRIDGE</text>
+      <text x="190" y="132" font-size="6" fill="#555" text-anchor="middle">48"W</text>
+      <text x="190" y="142" font-size="6" fill="#555" text-anchor="middle">①④</text>
+
+      <!-- Table w drawers -->
+      <rect x="166" y="170" width="48" height="120" fill="#d4dde8" stroke="#555" stroke-width="1"/>
+      <line x1="166" y1="200" x2="214" y2="200" stroke="#9a9080" stroke-width="1"/>
+      <line x1="166" y1="228" x2="214" y2="228" stroke="#9a9080" stroke-width="1"/>
+      <line x1="166" y1="256" x2="214" y2="256" stroke="#9a9080" stroke-width="1"/>
+      <line x1="178" y1="213" x2="202" y2="213" stroke="#7a6a52" stroke-width="2" stroke-linecap="round"/>
+      <line x1="178" y1="241" x2="202" y2="241" stroke="#7a6a52" stroke-width="2" stroke-linecap="round"/>
+      <text x="190" y="278" font-size="7" fill="#1a1612" text-anchor="middle">TABLE +</text>
+      <text x="190" y="288" font-size="7" fill="#1a1612" text-anchor="middle">DRAWERS</text>
+      <text x="190" y="298" font-size="6" fill="#555" text-anchor="middle">60"W ⑤</text>
+
+      <!-- Small table -->
+      <rect x="166" y="338" width="48" height="48" fill="#d4dde8" stroke="#555" stroke-width="1"/>
+      <text x="190" y="360" font-size="7" fill="#1a1612" text-anchor="middle">TABLE</text>
+      <text x="190" y="371" font-size="6" fill="#555" text-anchor="middle">24"W ⑥</text>
+
+      <!-- LEFT WALL SHELF -->
+      <rect x="40" y="74" width="32" height="306" fill="#e8e4d8" stroke="#555" stroke-width="1"/>
+      <line x1="40" y1="122" x2="72" y2="122" stroke="#9a9080" stroke-width="0.5" stroke-dasharray="2,4"/>
+      <line x1="40" y1="170" x2="72" y2="170" stroke="#9a9080" stroke-width="0.5" stroke-dasharray="2,4"/>
+      <line x1="40" y1="218" x2="72" y2="218" stroke="#9a9080" stroke-width="0.5" stroke-dasharray="2,4"/>
+      <line x1="40" y1="266" x2="72" y2="266" stroke="#9a9080" stroke-width="0.5" stroke-dasharray="2,4"/>
+      <line x1="40" y1="314" x2="72" y2="314" stroke="#9a9080" stroke-width="0.5" stroke-dasharray="2,4"/>
+      <line x1="40" y1="332" x2="72" y2="332" stroke="#9a9080" stroke-width="0.5" stroke-dasharray="2,4"/>
+      <text x="56" y="228" font-size="7" fill="#5a4f3f" text-anchor="middle" transform="rotate(-90,56,228)">WALL SHELF 16"D ⑦</text>
+
+      <!-- BUMP -->
+      <rect x="40" y="380" width="32" height="110" fill="#1a1612"/>
+      <text x="56" y="440" font-size="7" fill="#f8f5ee" text-anchor="middle" transform="rotate(-90,56,440)">BUMP 16"×5'</text>
+
+      <!-- DOOR arc -->
+      <path d="M 91 490 A 72 72 0 0 0 163 490" fill="#ece8de" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="91"  y1="490" x2="91"  y2="500" stroke="#1a1612" stroke-width="2"/>
+      <line x1="163" y1="490" x2="163" y2="500" stroke="#1a1612" stroke-width="2"/>
+      <text x="127" y="518" font-size="8" fill="#1a1612" text-anchor="middle">DOOR  36"</text>
+
+      <!-- GRID -->
+      <g stroke="#c8bfaa" stroke-width="0.3" stroke-dasharray="1,7" opacity="0.5">
+        <line x1="40" y1="122" x2="214" y2="122"/>
+        <line x1="40" y1="218" x2="214" y2="218"/>
+        <line x1="40" y1="314" x2="214" y2="314"/>
+        <line x1="40" y1="410" x2="214" y2="410"/>
+        <line x1="127" y1="26" x2="127" y2="490"/>
+      </g>
+
+      <!-- DIMS -->
+      <line x1="30" y1="6" x2="224" y2="6" stroke="#1a1612" stroke-width="0.75"/>
+      <line x1="30" y1="2" x2="30" y2="10" stroke="#1a1612" stroke-width="0.75"/>
+      <line x1="224" y1="2" x2="224" y2="10" stroke="#1a1612" stroke-width="0.75"/>
+      <text x="127" y="5" font-size="8" fill="#1a1612" text-anchor="middle">8'–1"</text>
+
+      <line x1="238" y1="16"  x2="238" y2="510" stroke="#1a1612" stroke-width="0.75"/>
+      <line x1="233" y1="16"  x2="243" y2="16"  stroke="#1a1612" stroke-width="0.75"/>
+      <line x1="233" y1="510" x2="243" y2="510" stroke="#1a1612" stroke-width="0.75"/>
+      <text x="234" y="265" font-size="8" fill="#1a1612" text-anchor="middle" transform="rotate(-90,234,265)">20'–7"</text>
+
+      <text x="127" y="14" font-size="7" fill="#8a7a66" text-anchor="middle">BACK WALL</text>
+
+    </svg>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#dde4ee"></div>Dishwasher</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ddeedd"></div>Sink</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#d4eed4"></div>Prep Fridge</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#d4dde8"></div>S.S. Tables</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#e8e4d8"></div>Wall Shelf</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#c8bfaa"></div>Bump-out</div>
+  </div>
+
+  <!-- DIMS TABLE -->
+  <table class="dims-table">
+    <tr><td>Room</td><td>20'–7" × 8'–1"</td></tr>
+    <tr><td>Bump-out</td><td>16"D × 5'–0"W</td></tr>
+    <tr><td>Door</td><td>36", bottom center</td></tr>
+    <tr><td>Right wall equipment depth</td><td>30"</td></tr>
+    <tr><td>Left wall shelf depth</td><td>16"</td></tr>
+    <tr><td>Aisle clear (approx)</td><td>~3'–6"</td></tr>
+  </table>
+
+</div>
+
+<!-- ══════════════ EQUIPMENT TAB ══════════════ -->
+<div id="equipment" class="panel">
+
+  <div class="section-head">Back Wall</div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">1</div>
+      <div class="eq-name">Undercounter Dishwasher</div>
+      <div class="eq-price">$400–900</div>
+    </div>
+    <div class="eq-spec">Hobart LXeH or Jackson DishStar LT · 24"W × 24"D × 34"H</div>
+    <div class="eq-why">Low-temp chemical sanitize — no booster heater needed, works with existing plumbing rough-in.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Craigslist LA → undercounter dishwasher<br><span class="eq-link-source">losangeles.craigslist.org</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Valencia dealer — warranty + delivery<br><span class="eq-link-source">Craigslist LA listing</span></div>
+    </div>
+  </div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">2</div>
+      <div class="eq-name">Commercial Sink</div>
+      <div class="eq-price">$150–350</div>
+    </div>
+    <div class="eq-spec">Single compartment + drainboard · 30"W × 24"D · NSF SS</div>
+    <div class="eq-why">Drainboard gives staging space next to DW. Single compartment is right-sized for service volume.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Craigslist LA → commercial sink stainless<br><span class="eq-link-source">losangeles.craigslist.org</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Chef Essentials LA — auction lots from $1<br><span class="eq-link-source">cerestaurantequipment.com</span></div>
+    </div>
+  </div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">3</div>
+      <div class="eq-name">S.S. Work Table (back corner)</div>
+      <div class="eq-price">$100–250</div>
+    </div>
+    <div class="eq-spec">30"W × 30"D × 36"H · 16-gauge 304 SS · undershelf</div>
+    <div class="eq-why">Fills right corner of back wall, staging surface, pairs with sink workflow.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Craigslist LA → stainless work table<br><span class="eq-link-source">losangeles.craigslist.org</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> AmGood Supply LA — new from $89<br><span class="eq-link-source">amgoodsupply.com</span></div>
+    </div>
+  </div>
+
+  <div class="section-head">Right Wall</div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">4</div>
+      <div class="eq-name">Sandwich / Deli Prep Fridge</div>
+      <div class="eq-price">$500–1,200</div>
+    </div>
+    <div class="eq-spec">True TSSU-48 or Turbo Air TST-48SD · 48"W × 30"D × 36"H · 115V</div>
+    <div class="eq-why">True TSSU-48 is the industry standard — parts everywhere, holds temp reliably. Mega-top maximizes pan capacity for charcuterie and cheese service. Best single investment in this room.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Craigslist LA → sandwich prep table 48"<br><span class="eq-link-source">losangeles.craigslist.org</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Facebook Marketplace LA → sandwich prep<br><span class="eq-link-source">facebook.com/marketplace</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Valencia dealer — True TSSU in stock<br><span class="eq-link-source">Craigslist LA listing</span></div>
+    </div>
+  </div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">5</div>
+      <div class="eq-name">Table with Drawers</div>
+      <div class="eq-price">$300–700</div>
+    </div>
+    <div class="eq-spec">60"W × 30"D × 36"H · SS w/ 3-drawer base · or True TUC-48D-4</div>
+    <div class="eq-why">Concealed drawer storage for service items, linens, tools. Keeps the pantry clean visually. True TUC undercounter with 4 drawers is the premium option.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Craigslist LA → stainless table drawers<br><span class="eq-link-source">losangeles.craigslist.org</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Chef Essentials LA auction — $1 start<br><span class="eq-link-source">cerestaurantequipment.com</span></div>
+    </div>
+  </div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">6</div>
+      <div class="eq-name">Small Table (near door)</div>
+      <div class="eq-price">$80–180</div>
+    </div>
+    <div class="eq-spec">24"W × 24"D × 36"H · 16-gauge SS</div>
+    <div class="eq-why">Drop zone at door for trays, deliveries, staging. Cheap and easy to find used.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> Craigslist LA → stainless table 24"<br><span class="eq-link-source">losangeles.craigslist.org</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> AmGood Supply LA — new from $89<br><span class="eq-link-source">amgoodsupply.com</span></div>
+    </div>
+  </div>
+
+  <div class="section-head">Left Wall</div>
+
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-num">7</div>
+      <div class="eq-name">Wall-Mount SS Shelving</div>
+      <div class="eq-price">$120–280 new</div>
+    </div>
+    <div class="eq-spec">16"D · Full left wall run ~15' · 2–3 tiers · 18-gauge SS brackets</div>
+    <div class="eq-why">Buy new — used shelving is hard to match in length and bracket spacing, and new runs are cheap. Mount at 24" and 54" for max utility.</div>
+    <div class="eq-links">
+      <div class="eq-source-line"><span class="eq-source-label">→</span> AmGood Supply — 10"×72" from $109<br><span class="eq-link-source">amgoodsupply.com</span></div>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> WebstaurantStore — ships to SB<br><span class="eq-link-source">webstaurantstore.com</span></div>
+    </div>
+  </div>
+
+  <div class="budget-box">
+    <strong>All-in estimate: $1,650 – $3,860</strong>
+    DW $400–900 · Sink $150–350 · Back table $100–250<br>
+    Prep fridge $500–1,200 · Drawer table $300–700<br>
+    Small table $80–180 · Shelving $120–280<br><br>
+    Budget $2,500 and you're fully equipped.
+  </div>
+
+</div>
+
+<!-- ══════════════ SOURCES TAB ══════════════ -->
+<div id="sources" class="panel">
+
+  <div class="section-head">Best Used — LA</div>
+
+  <a class="source-link" href="https://losangeles.craigslist.org/search/bfa?query=restaurant+equipment" target="_blank">
+    Craigslist LA — Restaurant Equipment
+    <span>Best for one-off finds, owner-direct pricing. Search daily.</span>
+  </a>
+
+  <a class="source-link" href="https://cerestaurantequipment.com" target="_blank">
+    Chef Essentials — LA Auction
+    <span>cerestaurantequipment.com · Lots start at $1 · In-person preview available · Nationwide shipping</span>
+  </a>
+
+  <a class="source-link" href="https://losangeles.craigslist.org/lac/bfd/d/los-angeles-used-restaurant-equipment/7925272530.html" target="_blank">
+    Valencia Dealer — Used + Warranty + Delivery
+    <span>Working equipment with warranty. True, Hobart, Turbo Air in stock. Delivers to SB.</span>
+  </a>
+
+  <a class="source-link" href="https://www.facebook.com/marketplace/los-angeles/search/?query=restaurant+equipment" target="_blank">
+    Facebook Marketplace LA
+    <span>Filter 50mi radius. Best for prep tables, work tables, misc.</span>
+  </a>
+
+  <div class="section-head">Walk-In Showrooms</div>
+
+  <a class="source-link" href="https://chefstoys.com/pages/restaurant-supply-equipment-los-angeles" target="_blank">
+    Chefs' Toys — Los Angeles
+    <span>chefstoys.com · New + open box · Full showroom · Good for sinks, shelving, tables</span>
+  </a>
+
+  <a class="source-link" href="https://www.amgoodsupply.com/los-angeles/" target="_blank">
+    AmGood Supply — LA Warehouse
+    <span>amgoodsupply.com · New SS tables and shelving from $89 · Fast ship or local pickup</span>
+  </a>
+
+  <div class="section-head">New / Ship to SB</div>
+
+  <a class="source-link" href="https://www.webstaurantstore.com" target="_blank">
+    WebstaurantStore
+    <span>webstaurantstore.com · Best prices on new shelving, sinks, tables · Ships anywhere</span>
+  </a>
+
+  <a class="source-link" href="https://www.cityfoodequipment.com/pages/new-used-commercial-restaurant-equipment-in-los-angeles-california" target="_blank">
+    City Food Equipment — LA
+    <span>cityfoodequipment.com · Restored used equipment · True, Turbo Air, Hobart in stock</span>
+  </a>
+
+</div>
+
+<!-- ══════════════ VISIT TAB ══════════════ -->
+<div id="visit" class="panel">
+
+  <p style="font-size:10px; color:#8a7a66; margin-bottom:14px; line-height:1.7;">Two walk-in locations confirmed in LA. Tap any button to open in Apple Maps or call directly.</p>
+
+  <!-- CHEF ESSENTIALS -->
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-name">Chef Essentials Restaurant Equipment</div>
+    </div>
+    <div class="eq-spec" style="margin-bottom:8px;">2503 E 4th St, Los Angeles, CA 90033</div>
+    <div class="eq-why" style="margin-bottom:10px;">
+      Best used equipment in LA. Showroom open to public. Written warranty on everything. Does delivery to SB. Bi-monthly auctions. Best single stop for prep fridge, tables, dishwasher.
+    </div>
+    <div style="font-size:10px; color:#5a4f3f; margin-bottom:10px; line-height:1.8;">
+      Mon–Fri 10am–5pm &nbsp;·&nbsp; Sat 11am–1pm &nbsp;·&nbsp; Sun closed<br>
+      (323) 839-2896
+    </div>
+    <div class="eq-links">
+      <a class="eq-link-btn" href="maps://maps.apple.com/?q=Chef+Essentials+Restaurant+Equipment&address=2503+E+4th+St,+Los+Angeles,+CA+90033" target="_blank">
+        📍 Open in Apple Maps
+        <span class="eq-link-source">2503 E 4th St, Los Angeles CA 90033</span>
+      </a>
+      <a class="eq-link-btn" href="tel:+13238392896">
+        📞 Call (323) 839-2896
+        <span class="eq-link-source">Mon–Fri 10–5 · Sat 11–1</span>
+      </a>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> 🌐 cerestaurantequipment.com<br><span class="eq-link-source">View current auction inventory</span></div>
+    </div>
+  </div>
+
+  <!-- CHEFS' TOYS -->
+  <div class="eq-card">
+    <div class="eq-card-header">
+      <div class="eq-name">Chefs' Toys — West LA</div>
+    </div>
+    <div class="eq-spec" style="margin-bottom:8px;">2233 S Sepulveda Blvd, Los Angeles, CA 90064</div>
+    <div class="eq-why" style="margin-bottom:10px;">
+      Large showroom, open to public. New and open-box equipment. Best for sinks, wall shelving, small tables, smallwares. 40-truck delivery fleet covers CA including SB.
+    </div>
+    <div style="font-size:10px; color:#5a4f3f; margin-bottom:10px; line-height:1.8;">
+      Mon–Fri 8am–5pm &nbsp;·&nbsp; Sat 9am–5pm &nbsp;·&nbsp; Sun closed<br>
+      (310) 477-7107
+    </div>
+    <div class="eq-links">
+      <a class="eq-link-btn" href="maps://maps.apple.com/?q=Chefs+Toys&address=2233+S+Sepulveda+Blvd,+Los+Angeles,+CA+90064" target="_blank">
+        📍 Open in Apple Maps
+        <span class="eq-link-source">2233 S Sepulveda Blvd, Los Angeles CA 90064</span>
+      </a>
+      <a class="eq-link-btn" href="tel:+13104777107">
+        📞 Call (310) 477-7107
+        <span class="eq-link-source">Mon–Fri 8–5 · Sat 9–5</span>
+      </a>
+      <div class="eq-source-line"><span class="eq-source-label">→</span> 🌐 chefstoys.com<br><span class="eq-link-source">Browse inventory before visiting</span></div>
+    </div>
+  </div>
+
+  <!-- MAP NOTE -->
+  <div style="background:#f0ece2; border:1px solid #c8bfaa; border-radius:4px; padding:12px; font-size:10px; line-height:1.8; color:#5a4f3f; margin-top:4px;">
+    <strong style="display:block; margin-bottom:4px; color:#1a1612;">Suggested order of visit</strong>
+    Chef Essentials first (E 4th St) — used inventory, negotiate on the spot.<br>
+    Chefs' Toys second (Sepulveda) — fill in anything new you couldn't source used.<br>
+    Both are ~20 min apart. Plan 1–2 hours total.
+  </div>
+
+</div>
+
+<script>
+  function showTab(id, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
