@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Grayling Collection Advisory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Libre+Baskerville:ital@0;1&family=Inter:wght@300;400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    color-scheme: light only;
+  }
+
+  :root {
+    --ink:        #1a1814;
+    --parchment:  #f5f1e8;
+    --warm-mid:   #b8a484;
+    --rule:       #2e2b26;
+    --muted:      #3d3830;
+    --accent:     #4a3f2f;
+  }
+
+  html, body {
+    background-color: #f5f1e8 !important;
+  }
+
+  body {
+    background-color: #f5f1e8 !important;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    line-height: 1.8;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 72px 48px 96px;
+  }
+
+  /* HEADER */
+  header {
+    border-top: 2px solid var(--rule);
+    border-bottom: 1px solid var(--warm-mid);
+    padding: 28px 0 24px;
+    margin-bottom: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .wordmark {
+    font-family: 'EB Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .wordmark span {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 9.5px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+    white-space: nowrap;
+  }
+
+  .contact-block {
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    line-height: 1.9;
+  }
+
+  /* POSITIONING STATEMENT */
+  .position {
+    border-left: 1px solid var(--warm-mid);
+    padding-left: 28px;
+    margin-bottom: 64px;
+  }
+
+  .position p {
+    font-family: 'EB Garamond', serif;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .position p em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--warm-mid);
+  }
+
+  /* SERVICES */
+  .services {
+    margin-bottom: 64px;
+  }
+
+  .service {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 48px;
+    padding: 28px 0;
+    border-bottom: 1px solid #e0d9cc;
+  }
+
+  .service:last-child {
+    border-bottom: none;
+  }
+
+  .service-name {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .service-sub {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    margin-bottom: 10px;
+  }
+
+  .service-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .service-items {
+    padding-top: 4px;
+  }
+
+  .service-item {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 2.1;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .service-item::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--warm-mid);
+    font-size: 10px;
+  }
+
+  /* ABOUT */
+  .about {
+    margin-bottom: 64px;
+  }
+
+  .about p {
+    font-size: 14.5px;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 14px;
+  }
+
+  .about p:last-child { margin-bottom: 0; }
+
+  /* CREDENTIALS STRIP */
+  .credentials {
+    border-top: 1px solid var(--warm-mid);
+    border-bottom: 2px solid var(--rule);
+    padding: 20px 0;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+
+  .cred {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cred strong {
+    display: block;
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 40px 24px 72px; }
+    header { flex-direction: row; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+    .contact-block { text-align: left; }
+    .service { grid-template-columns: 1fr; gap: 16px; }
+    .credentials { gap: 24px; }
+    .wordmark { font-size: 19px; }
+    .wordmark span { font-size: 8px; letter-spacing: 0.12em; }
+  }
+
+  @media print {
+    body { padding: 48px; }
+    html { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">
+    Grayling Collection Advisory
+    <span>Santa Barbara · Montecito · California</span>
+  </div>
+  <div class="contact-block">
+    Thomas Grayling<br>
+    360-224-2861<br>
+    thomasgrayling@gmail.com<br>
+    tgrayling.substack.com
+  </div>
+</header>
+
+<div class="position">
+  <p>
+    Serious collections require <em>serious management</em> — not storage alone, 
+    but the full operational infrastructure that keeps significant objects properly documented, 
+    appropriately housed, and ready to be enjoyed. Grayling Collection Advisory 
+    provides that infrastructure to private collectors and family offices on the American Riviera.
+  </p>
+</div>
+
+<div class="services">
+  <div class="section-label">Services</div>
+
+  <div class="service">
+    <div>
+      <div class="service-name">Collection Cataloging & Documentation</div>
+      <div class="service-sub">Foundation service</div>
+      <div class="service-desc">A collection without a catalog is an undocumented liability. Complete object-by-object documentation, provenance records, condition notes, and photographic archive — structured for insurance, estate, and personal reference.</div>
+    </div>
+    <div class="service-items">
+      <div class="service-item">Full collection inventory and object records</div>
+      <div class="service-item">Provenance research and documentation</div>
+      <div class="service-item">Condition assessment and photographic archive</div>
+      <div class="service-item">Insurance-ready valuation summaries</div>
+      <div class="service-item">Estate and trust documentation support</div>
+    </div>
+  </div>
+
+  <div class="service">
+    <div>
+      <div class="service-name">Ongoing Collection Management</div>
+      <div class="service-sub">Retained advisory</div>
+      <div class="service-desc">Month-to-month operational stewardship of the collection — from routine condition monitoring to coordinating specialist vendors, managing logistics, and keeping the record current as the collection evolves.</div>
+    </div>
+    <div class="service-items">
+      <div class="service-item">Periodic condition reviews and updates</div>
+      <div class="service-item">Specialist vendor coordination</div>
+      <div class="service-item">Acquisition and deaccession support</div>
+      <div class="service-item">Storage and access logistics</div>
+      <div class="service-item">Insurance and appraisal liaison</div>
+    </div>
+  </div>
+
+  <div class="service">
+    <div>
+      <div class="service-name">Acquisition & Disposition Advisory</div>
+      <div class="service-sub">Transaction support</div>
+      <div class="service-desc">Experienced eyes on both sides of the transaction — sourcing, due diligence, authentication coordination, logistics, and disposition — across fine art, timepieces, jewelry, automobiles, wine, and rare books.</div>
+    </div>
+    <div class="service-items">
+      <div class="service-item">Market sourcing and off-market identification</div>
+      <div class="service-item">Due diligence and authentication coordination</div>
+      <div class="service-item">Transaction logistics and transport</div>
+      <div class="service-item">Disposition and brokerage support</div>
+    </div>
+  </div>
+
+  <div class="service">
+    <div>
+      <div class="service-name">Storage & Housing Strategy</div>
+      <div class="service-sub">Infrastructure advisory</div>
+      <div class="service-desc">Many collections are housed in environments that do not match the objects' requirements. Assessment of current conditions, specification of appropriate storage, and coordination with purpose-built facilities where warranted.</div>
+    </div>
+    <div class="service-items">
+      <div class="service-item">Environmental and security assessment</div>
+      <div class="service-item">Purpose-built storage specification</div>
+      <div class="service-item">Climate, humidity, and lighting requirements</div>
+      <div class="service-item">Facility coordination and access logistics</div>
+    </div>
+  </div>
+
+  <div class="service">
+    <div>
+      <div class="service-name">Estate & Family Office Integration</div>
+      <div class="service-sub">Principal support</div>
+      <div class="service-desc">Collection management embedded in the broader operational context of the estate — coordinated with property managers, family office staff, legal counsel, and trustees for seamless administration.</div>
+    </div>
+    <div class="service-items">
+      <div class="service-item">Family office operational integration</div>
+      <div class="service-item">Trust and estate administration support</div>
+      <div class="service-item">Multi-property collection coordination</div>
+      <div class="service-item">Confidential principal support</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="about">
+  <div class="section-label">Background</div>
+  <p>
+    Thomas Grayling has spent over a decade managing significant private estates and collections 
+    for ultra-high-net-worth principals and family offices across California and New York. 
+    His hands-on experience spans fine art, vintage European automobiles, timepieces, 
+    Art Nouveau and Art Deco jewelry, wine, rare books, and architectural collections — 
+    with combined assets managed in excess of $100 million.
+  </p>
+  <p>
+    His editorial work — including a feature on the emerging luxury vault and private custody 
+    market published under his byline in March 2026 — reflects a practitioner's understanding 
+    of where private collection management is heading and what serious collectors actually need 
+    from the people they trust with their objects.
+  </p>
+  <p>
+    Grayling Collection Advisory clients benefit from access to Provenance, a proprietary 
+    collection intelligence platform developed to support valuation tracking, condition 
+    documentation, and advisor reporting — purpose-built for the private collector market.
+  </p>
+</div>
+
+<div class="credentials">
+  <div class="cred">
+    <strong>$100M+</strong>
+    Assets managed
+  </div>
+  <div class="cred">
+    <strong>10+ Years</strong>
+    UHNW estate & collection experience
+  </div>
+  <div class="cred">
+    <strong>California · New York</strong>
+    Geographic coverage
+  </div>
+  <div class="cred">
+    <strong>All categories</strong>
+    Art · Automobiles · Timepieces · Wine · Jewelry · Books
+  </div>
+</div>
+
+<footer>
+  Grayling Collection Advisory · Santa Barbara, California · Absolute Discretion · NDA Available
+</footer>
+
+</body>
+</html>
