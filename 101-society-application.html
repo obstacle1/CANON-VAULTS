@@ -523,7 +523,7 @@
     <div class="value-pill"><div class="value-dot"></div><span class="value-name">Connoisseurship</span></div>
   </div>
 
-  <form id="app-form" novalidate>
+  <form id="app-form" action="https://formspree.io/f/xdarzoek" method="POST" novalidate>
 
     <!-- VALUE I: FUN -->
     <div class="tenant">
@@ -737,14 +737,35 @@
     });
   });
 
-  document.getElementById('app-form').addEventListener('submit', function(e) {
+  document.getElementById('app-form').addEventListener('submit', async function(e) {
     e.preventDefault();
-    document.getElementById('app-form').style.display = 'none';
-    document.querySelector('.app-header').style.display = 'none';
-    var vb = document.querySelector('.values-bar');
-    if (vb) vb.style.display = 'none';
-    document.getElementById('thank-you').classList.add('visible');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var form = document.getElementById('app-form');
+    var btn = form.querySelector('.btn-submit');
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+    try {
+      var response = await fetch('https://formspree.io/f/xdarzoek', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (response.ok) {
+        form.style.display = 'none';
+        document.querySelector('.app-header').style.display = 'none';
+        var vb = document.querySelector('.values-bar');
+        if (vb) vb.style.display = 'none';
+        document.getElementById('thank-you').classList.add('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        btn.textContent = 'Submit Application';
+        btn.disabled = false;
+        alert('Something went wrong. Please try again.');
+      }
+    } catch(err) {
+      btn.textContent = 'Submit Application';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again.');
+    }
   });
 </script>
 </body>
