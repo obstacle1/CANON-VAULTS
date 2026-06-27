@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>101 Society — Application for Membership</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:      #0E0D0B;
+    --deep:     #1C1A16;
+    --parchment:#F0EBE1;
+    --brass:    #B8965A;
+    --brass-lt: #D4AD72;
+    --muted:    #7A7268;
+    --rule:     #2E2B25;
+    --field-bg: #161410;
+    --field-br: #3A3630;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── SEAL SCREEN ─────────────────────────────────────── */
+  #seal-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #seal-screen.opened {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .seal-address {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .seal-wrap {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .seal-svg {
+    width: 200px;
+    height: 200px;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 24px rgba(184,150,90,0.15));
+  }
+  .seal-wrap:hover .seal-svg {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 36px rgba(184,150,90,0.28));
+  }
+
+  .seal-instruction {
+    font-family: 'Cormorant Garant', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .seal-instruction span {
+    color: var(--brass);
+  }
+
+  /* ── MAIN APPLICATION ─────────────────────────────────── */
+  #application {
+    opacity: 0;
+    transition: opacity 1s ease 0.2s;
+    pointer-events: none;
+  }
+  #application.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── HEADER ──────────────────────────────────────────── */
+  .app-header {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 40px 64px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eyebrow::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--brass);
+    opacity: 0.5;
+  }
+
+  .app-header h1 {
+    font-family: 'Cormorant Garant', serif;
+    font-weight: 300;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--parchment);
+    margin-bottom: 28px;
+  }
+
+  .app-header h1 em {
+    font-style: italic;
+    color: var(--brass-lt);
+  }
+
+  .app-header p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.8;
+  }
+
+
+  /* VALUES BAR */
+  .values-bar {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 40px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .value-pill { display: flex; align-items: center; gap: 10px; }
+  .value-dot { width: 5px; height: 5px; background: var(--brass); transform: rotate(45deg); flex-shrink: 0; }
+  .value-name { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+
+  /* ── FORM WRAPPER ─────────────────────────────────────── */
+  form {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 40px 120px;
+  }
+
+  /* ── TENANT SECTIONS ──────────────────────────────────── */
+  .tenant {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tenant:last-of-type {
+    border-bottom: none;
+  }
+
+  .tenant-header {
+    margin-bottom: 40px;
+  }
+
+  .tenant-label {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tenant-numeral {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .tenant-title {
+    font-family: 'Cormorant Garant', serif;
+    font-weight: 400;
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height: 1.2;
+    color: var(--parchment);
+    margin-bottom: 12px;
+    letter-spacing: 0.01em;
+  }
+
+  .tenant-premise {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Cormorant Garant', serif;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  /* ── FIELD GROUPS ─────────────────────────────────────── */
+  .field-group {
+    margin-bottom: 32px;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .field-group input[type="text"],
+  .field-group input[type="email"],
+  .field-group input[type="tel"],
+  .field-group textarea,
+  .field-group select {
+    width: 100%;
+    background: var(--field-bg);
+    border: 1px solid var(--field-br);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    border-radius: 0;
+  }
+
+  .field-group input:focus,
+  .field-group textarea:focus,
+  .field-group select:focus {
+    border-color: var(--brass);
+  }
+
+  .field-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 7px;
+    font-style: italic;
+    font-family: 'Cormorant Garant', serif;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ── RADIO / SELECT GROUPS ───────────────────────────── */
+  .choice-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .choice-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+    padding: 14px 16px;
+    border: 1px solid var(--field-br);
+    background: var(--field-bg);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .choice-item:hover {
+    border-color: var(--brass);
+    background: #1A1814;
+  }
+
+  .choice-item input[type="radio"],
+  .choice-item input[type="checkbox"] {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    border: 1px solid var(--muted);
+    background: transparent;
+    margin-top: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s ease;
+  }
+
+  .choice-item input[type="radio"] { border-radius: 50%; }
+
+  .choice-item input[type="radio"]:checked,
+  .choice-item input[type="checkbox"]:checked {
+    border-color: var(--brass);
+    background: var(--brass);
+  }
+
+  .choice-item input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+
+  .choice-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    font-size: 10px;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .choice-item.selected {
+    border-color: var(--brass);
+    background: #1A1814;
+  }
+
+  .choice-text {
+    font-size: 14px;
+    color: var(--parchment);
+    line-height: 1.5;
+  }
+
+  .choice-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Cormorant Garant', serif;
+    margin-top: 2px;
+  }
+
+  /* ── PERSONAL INFO SECTION ───────────────────────────── */
+  .info-section {
+    padding: 64px 0 40px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garant', serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--parchment);
+    margin-bottom: 32px;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── SUBMIT ──────────────────────────────────────────── */
+  .submit-area {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .submit-note {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Cormorant Garant', serif;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  .btn-submit {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--brass);
+    border: none;
+    padding: 16px 40px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+
+  .btn-submit:hover { background: var(--brass-lt); }
+  .btn-submit:active { transform: scale(0.98); }
+
+  /* ── THANK YOU STATE ──────────────────────────────────── */
+  #thank-you {
+    display: none;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 120px 40px;
+    text-align: center;
+  }
+  #thank-you.visible { display: block; }
+
+  #thank-you h2 {
+    font-family: 'Cormorant Garant', serif;
+    font-weight: 300;
+    font-size: 38px;
+    color: var(--parchment);
+    margin-bottom: 20px;
+  }
+  #thank-you p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  /* ── RULE ORNAMENT ───────────────────────────────────── */
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 8px 0 32px;
+  }
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .ornament-dot {
+    width: 4px;
+    height: 4px;
+    background: var(--brass);
+    transform: rotate(45deg);
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .app-header, form { padding-left: 24px; padding-right: 24px; }
+    .field-row { grid-template-columns: 1fr; }
+    #thank-you { padding: 80px 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+  }
+
+  /* ── INPUT PLACEHOLDER ───────────────────────────────── */
+  ::placeholder { color: #4A4640; font-style: italic; }
+  select option { background: #1C1A16; color: var(--parchment); }
+</style>
+</head>
+<body>
+
+<!-- ── SEAL SCREEN ──────────────────────────────────────── -->
+<div id="seal-screen">
+  <p class="seal-address">101 West Canon Perdido Street &nbsp;·&nbsp; Santa Barbara, California</p>
+  <div class="seal-wrap" id="seal-btn" role="button" tabindex="0" aria-label="Open application">
+    <svg class="seal-svg" viewBox="0 0 374 374" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer large circle (faint, matches logo's outer ring) -->
+      <circle cx="187" cy="187" r="182" stroke="#B8965A" stroke-width="1.2" opacity="0.25"/>
+      <!-- Square (inset, matches logo geometry) -->
+      <rect x="42" y="42" width="290" height="290" stroke="#B8965A" stroke-width="1.5" opacity="0.55"/>
+      <!-- Inner circle (main ring, matches logo) -->
+      <circle cx="187" cy="187" r="138" stroke="#B8965A" stroke-width="2" opacity="0.85"/>
+      <!-- Fill inside inner circle -->
+      <circle cx="187" cy="187" r="136" fill="#141210"/>
+      <!-- 101 numeral — faithful to logo weight and position -->
+      <text x="187" y="218" text-anchor="middle"
+            font-family="'Cormorant Garant', Georgia, serif"
+            font-size="118" font-weight="400" letter-spacing="-2"
+            fill="#B8965A">101</text>
+
+    </svg>
+    <p class="seal-instruction"><span>Break the seal</span> to begin your application</p>
+  </div>
+</div>
+
+<!-- ── APPLICATION ──────────────────────────────────────── -->
+<div id="application">
+
+  <header class="app-header">
+    <p class="eyebrow">By invitation only</p>
+    <h1>Application for Membership<br>to the <em>101 Society</em></h1>
+    <div class="ornament"><div class="ornament-dot"></div></div>
+    <p>You have been personally invited to apply. This is not a form — it is an examination of character. The 101 Society is guided by four values: <em style="color:var(--brass-lt);font-family:'Cormorant Garant',serif">fun, passion, curiosity, and respect.</em> This application is an opportunity to demonstrate them.</p>
+  </header>
+
+  <!-- VALUES BAR -->
+  <div class="values-bar">
+    <div class="value-pill"><div class="value-dot"></div><span class="value-name">Fun</span></div>
+    <div class="value-pill"><div class="value-dot"></div><span class="value-name">Passion</span></div>
+    <div class="value-pill"><div class="value-dot"></div><span class="value-name">Curiosity</span></div>
+    <div class="value-pill"><div class="value-dot"></div><span class="value-name">Respect</span></div>
+    <div class="value-pill"><div class="value-dot"></div><span class="value-name">Connoisseurship</span></div>
+  </div>
+
+  <form id="app-form" novalidate>
+
+    <!-- VALUE I: FUN -->
+    <div class="tenant">
+      <div class="tenant-header">
+        <p class="tenant-label"><span class="tenant-numeral">I of V</span> &nbsp;First Value</p>
+        <h2 class="tenant-title">Fun</h2>
+        <p class="tenant-premise">The Society is not a boardroom. It is a room where serious people allow themselves to be genuinely delighted — by objects, by ideas, by each other. We take what we collect seriously. We do not take ourselves too seriously.</p>
+      </div>
+      <div class="field-group">
+        <label>What does an evening look like when it is genuinely good — not impressive, but good?</label>
+        <textarea name="fun_evening" rows="4" placeholder="Your answer…"></textarea>
+      </div>
+      <div class="field-group">
+        <label>What is something you collect, follow, or know about that surprises people?</label>
+        <textarea name="fun_surprise" rows="3" placeholder="Your answer…"></textarea>
+        <p class="field-hint">The category does not need to be prestigious. Depth and delight matter more than market value.</p>
+      </div>
+    </div>
+
+    <!-- VALUE II: PASSION -->
+    <div class="tenant">
+      <div class="tenant-header">
+        <p class="tenant-label"><span class="tenant-numeral">II of V</span> &nbsp;Second Value</p>
+        <h2 class="tenant-title">Passion</h2>
+        <p class="tenant-premise">Members of the 101 Society are defined not by what they own but by the depth of their engagement with what they care about. Passion here means the kind of commitment that requires no audience.</p>
+      </div>
+      <div class="field-group">
+        <label>What are you most passionate about — in any domain?</label>
+        <textarea name="passion_subject" rows="4" placeholder="Your answer…"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Describe a moment when that passion led you somewhere unexpected.</label>
+        <textarea name="passion_moment" rows="4" placeholder="Your answer…"></textarea>
+      </div>
+    </div>
+
+    <!-- VALUE III: CURIOSITY -->
+    <div class="tenant">
+      <div class="tenant-header">
+        <p class="tenant-label"><span class="tenant-numeral">III of V</span> &nbsp;Third Value</p>
+        <h2 class="tenant-title">Curiosity</h2>
+        <p class="tenant-premise">The 101 in 101 Society is not incidental. The Society is designed to hold one hundred and one different kinds of serious engagement with the world — because genuinely curious people resist category. The most interesting members connect dots that have no business being connected.</p>
+      </div>
+      <div class="field-group">
+        <label>What are you currently trying to understand — in any domain?</label>
+        <textarea name="curiosity_current" rows="4" placeholder="Your answer…"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Outside your primary field or collecting category, where does your attention tend to go?</label>
+        <textarea name="curiosity_range" rows="3" placeholder="Your answer…"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Is there a question you find yourself returning to — one that does not yet have a satisfying answer?</label>
+        <textarea name="curiosity_question" rows="4" placeholder="Your answer…"></textarea>
+        <p class="field-hint">This is the question we most look forward to reading.</p>
+      </div>
+    </div>
+
+    <!-- VALUE IV: RESPECT -->
+    <div class="tenant">
+      <div class="tenant-header">
+        <p class="tenant-label"><span class="tenant-numeral">IV of V</span> &nbsp;Fourth Value</p>
+        <h2 class="tenant-title">Respect</h2>
+        <p class="tenant-premise">The Society will not admit someone who cannot bring genuine respect into the room — for other members, for the objects they hold, for the privacy of what is shared. Respect is the condition on which everything else rests.</p>
+      </div>
+      <div class="field-group">
+        <label>Who referred you to the 101 Society, and what is the nature of your relationship?</label>
+        <input type="text" name="referral" placeholder="Name and how you know them">
+      </div>
+      <div class="field-group">
+        <label>What would you bring to a room of people who share your level of engagement with what they collect and value?</label>
+        <textarea name="respect_contribution" rows="4" placeholder="Your answer…"></textarea>
+        <p class="field-hint">We are interested in character and perspective as much as professional credential.</p>
+      </div>
+      <div class="field-group">
+        <label>The Society operates with complete discretion among its members. How do you think about the distinction between privacy and secrecy?</label>
+        <textarea name="respect_discretion" rows="4" placeholder="Your answer…"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Is there anything about the 101 Society you would want to understand better before committing to membership?</label>
+        <textarea name="respect_questions" rows="3" placeholder="Questions, reservations, or considerations…"></textarea>
+      </div>
+    </div>
+
+    <!-- VALUE V: CONNOISSEURSHIP -->
+    <div class="tenant">
+      <div class="tenant-header">
+        <p class="tenant-label"><span class="tenant-numeral">V of V</span> &nbsp;Fifth Value</p>
+        <h2 class="tenant-title">Connoisseurship</h2>
+        <p class="tenant-premise">The Society was built around serious collectors who have a real and recurring need for somewhere exceptional to keep what they value. We are curious about what you collect, how you hold it, and what you find missing from the current landscape.</p>
+      </div>
+      <div class="field-group">
+        <label>What do you collect, hold, or steward?</label>
+        <textarea name="connoisseur_collection" rows="3" placeholder="Fine art, timepieces, wine, automobiles, documents, land — or something harder to name…"></textarea>
+        <p class="field-hint">If you do not consider yourself a collector, describe what you are deeply engaged with instead.</p>
+      </div>
+      <div class="field-group">
+        <label>Describe one object or holding that is genuinely significant to you — not by market value, but by what it represents.</label>
+        <textarea name="connoisseur_object" rows="5" placeholder="Your answer…"></textarea>
+      </div>
+      <div class="field-group">
+        <label>How do you currently manage the physical custody and care of your most valued holdings?</label>
+        <div class="choice-group">
+          <label class="choice-item">
+            <input type="radio" name="custody_method" value="home">
+            <div class="choice-text">Primarily at a personal residence
+              <div class="choice-sub">Safe, vault room, or general residential storage</div>
+            </div>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="custody_method" value="bank">
+            <div class="choice-text">Bank or institutional safe deposit
+              <div class="choice-sub">Standard financial institution storage</div>
+            </div>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="custody_method" value="commercial">
+            <div class="choice-text">Commercial storage or specialist facility
+              <div class="choice-sub">Fine art storage, climate-controlled off-site</div>
+            </div>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="custody_method" value="mixed">
+            <div class="choice-text">A combination of the above</div>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="custody_method" value="none">
+            <div class="choice-text">No dedicated custody arrangement at present</div>
+          </label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>What is missing from how you currently store, access, or enjoy what you care most about?</label>
+        <textarea name="connoisseur_gap" rows="4" placeholder="Your answer…"></textarea>
+      </div>
+    </div>
+
+    
+
+    <!-- PERSONAL INFORMATION -->
+    <div class="info-section">
+      <h3 class="section-title">About You</h3>
+      <div class="field-row">
+        <div class="field-group">
+          <label>First Name</label>
+          <input type="text" name="first_name" required>
+        </div>
+        <div class="field-group">
+          <label>Last Name</label>
+          <input type="text" name="last_name" required>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Email Address</label>
+        <input type="email" name="email" required>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>Mobile</label>
+          <input type="tel" name="phone" placeholder="Optional">
+        </div>
+        <div class="field-group">
+          <label>City of Primary Residence</label>
+          <input type="text" name="city">
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Professional context (optional)</label>
+        <input type="text" name="profession" placeholder="How you spend your time professionally, in your own words">
+        <p class="field-hint">We do not require a title or company name. Your own description is preferred.</p>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area">
+      <p class="submit-note">Your application will be reviewed by the founding membership committee. You will be contacted directly — typically within two weeks. The Society does not maintain a waitlist; applications are considered individually and in confidence.</p>
+      <button type="submit" class="btn-submit">Submit Application</button>
+    </div>
+
+  </form>
+
+  <!-- THANK YOU -->
+  <div id="thank-you">
+    <h2>Your application has been received.</h2>
+    <div class="ornament" style="justify-content:center; margin: 24px 0;"><div class="ornament-dot"></div></div>
+    <p>The membership committee will review your submission and be in touch directly. We are grateful for the care you brought to this.</p>
+  </div>
+
+</div><!-- /#application -->
+
+<script>
+  const sealScreen  = document.getElementById('seal-screen');
+  const sealBtn     = document.getElementById('seal-btn');
+  const application = document.getElementById('application');
+
+  function openSeal() {
+    sealScreen.classList.add('opened');
+    application.classList.add('visible');
+  }
+
+  sealBtn.addEventListener('click', openSeal);
+  sealBtn.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSeal(); }
+  });
+
+  document.querySelectorAll('.choice-item input').forEach(function(input) {
+    input.addEventListener('change', function() {
+      var group = input.closest('.choice-group');
+      if (group) group.querySelectorAll('.choice-item').forEach(function(item) { item.classList.remove('selected'); });
+      input.closest('.choice-item').classList.add('selected');
+    });
+  });
+
+  document.getElementById('app-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    document.getElementById('app-form').style.display = 'none';
+    document.querySelector('.app-header').style.display = 'none';
+    var vb = document.querySelector('.values-bar');
+    if (vb) vb.style.display = 'none';
+    document.getElementById('thank-you').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
