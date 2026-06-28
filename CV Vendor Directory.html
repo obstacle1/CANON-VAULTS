@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CV Directory">
+<title>CV Vendor Directory</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #f2f2f0;
+    --card: #ffffff;
+    --border: #e4e4e2;
+    --label: #8a8a8a;
+    --name: #111111;
+    --company: #555555;
+    --link: #0071e3;
+    --note: #8a8a8a;
+    --search-bg: #ffffff;
+    --header-bg: #f2f2f0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--name);
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--header-bg);
+    padding: 12px 16px 10px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header h1 {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 8px;
+  }
+
+  .search-wrap { position: relative; }
+  .search-wrap svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--label);
+  }
+
+  input[type="search"] {
+    width: 100%;
+    padding: 10px 12px 10px 34px;
+    font-size: 16px; /* prevents iOS zoom */
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--search-bg);
+    color: var(--name);
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+  }
+  input[type="search"]:focus { border-color: #aaa; }
+  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 16px 12px;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .section { margin-bottom: 28px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--label);
+    padding: 0 4px;
+    margin-bottom: 8px;
+  }
+
+  .cards { display: flex; flex-direction: column; gap: 1px; }
+
+  .card {
+    background: var(--card);
+    padding: 13px 14px;
+    border-radius: 0;
+    position: relative;
+  }
+  .cards .card:first-child { border-radius: 10px 10px 0 0; }
+  .cards .card:last-child  { border-radius: 0 0 10px 10px; }
+  .cards .card:only-child  { border-radius: 10px; }
+  .cards .card:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 14px; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .card-name    { font-size: 15px; font-weight: 600; color: var(--name); line-height: 1.2; }
+  .card-company { font-size: 13px; color: var(--company); margin-top: 2px; }
+
+  .card-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 8px;
+  }
+
+  .card-contacts a {
+    font-size: 14px;
+    color: var(--link);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+    min-height: 36px; /* comfortable tap target */
+  }
+
+  .card-notes {
+    font-size: 12px;
+    color: var(--note);
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  .no-results {
+    text-align: center;
+    color: var(--label);
+    font-size: 14px;
+    padding: 60px 0;
+    display: none;
+  }
+
+  /* ── DESKTOP ── */
+  @media (min-width: 768px) {
+    .header {
+      padding: 16px 24px 14px;
+    }
+    .header h1 { font-size: 12px; margin-bottom: 10px; }
+    input[type="search"] { font-size: 14px; max-width: 400px; }
+
+    .content {
+      max-width: 1100px;
+      padding: 24px 24px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0 24px;
+      align-items: start;
+    }
+
+    .section { margin-bottom: 24px; }
+    .card { padding: 11px 14px; }
+    .card-name { font-size: 14px; }
+    .card-company { font-size: 12px; }
+    .card-contacts a { font-size: 13px; min-height: unset; padding: 2px 0; }
+    .card-notes { font-size: 11px; }
+  }
+
+  @media (min-width: 1200px) {
+    .content { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Canon Vaults — Vendor Directory</h1>
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/>
+    </svg>
+    <input type="search" id="search" placeholder="Search name, company, category…" oninput="filterCards()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  </div>
+</div>
+
+<div class="content" id="directory"></div>
+<p class="no-results" id="noResults">No matches found.</p>
+
+<script>
+const data = [
+  { cat: "Core Team", name: "Greg Reitz", company: "ReThink / ReThink Storage", phone: "(310) 292-4876", email: "", notes: "" },
+  { cat: "Core Team", name: "Joe Buendia", company: "Gluck Building (GC)", phone: "818-512-4185", email: "jb@gluckbuilding.com", notes: "Jeff = Super" },
+  { cat: "Core Team", name: "Nick Mason", company: "Mason CI (GC)", phone: "(805) 252-6800", email: "Nick@masonci.com", notes: "" },
+  { cat: "Core Team", name: "Ferdinand Mata", company: "JTC Architects", phone: "", email: "fmata@jtcarch.com", notes: "" },
+  { cat: "Core Team", name: "AC Mata", company: "JTC Architects", phone: "", email: "acmata@jtcarch.com", notes: "" },
+  { cat: "Core Team", name: "Natalie / Gina / Mel", company: "MN Studio (Interior Design)", phone: "", email: "", notes: "" },
+  { cat: "Core Team", name: "David Wexler", company: "Hollywood Vaults / CV Consultant", phone: "(323) 202-7849", email: "davidpwexler@me.com", notes: "Operational consultant" },
+
+  { cat: "Engineers", name: "Paulina Valdez", company: "ProEngineering (MEP)", phone: "", email: "Paulina@proengc.com", notes: "" },
+  { cat: "Engineers", name: "Armando H", company: "ProEngineering (Mechanical)", phone: "", email: "Armando@proengc.com", notes: "" },
+  { cat: "Engineers", name: "Chad Pruett", company: "Ashley Vance (Structural)", phone: "", email: "Chad@ashleyvance.com", notes: "" },
+  { cat: "Engineers", name: "Drew King", company: "Ashley Vance (Structural)", phone: "", email: "Drew@ashleyvance.com", notes: "" },
+
+  { cat: "Subcontractors", name: "Rick Cook", company: "Premium Rock Drywall", phone: "818-676-3350", email: "", notes: "Agoura Hills" },
+  { cat: "Subcontractors", name: "Javi", company: "Paredes Painting", phone: "805-317-3111", email: "paredespaintinginc@gmail.com", notes: "" },
+  { cat: "Subcontractors", name: "Peter Hernandez", company: "Brothers of Industry (Millwork)", phone: "", email: "", notes: "" },
+  { cat: "Subcontractors", name: "Jez Blecker", company: "ILLUM (Lighting)", phone: "", email: "", notes: "" },
+  { cat: "Subcontractors", name: "Josh Agress", company: "Agress Electric", phone: "805-699-0095", email: "", notes: "LIC 1120184" },
+  { cat: "Subcontractors", name: "Vladimir", company: "Cameras4k (Conduit)", phone: "", email: "", notes: "" },
+  { cat: "Subcontractors", name: "Israel", company: "Shrewsbury Plumbing", phone: "818-805-3691", email: "", notes: "" },
+  { cat: "Subcontractors", name: "Jesus", company: "Waterproofing Experts (Flooring)", phone: "818-266-2454", email: "", notes: "Canoga Park" },
+  { cat: "Subcontractors", name: "Junior", company: "Ceiling Panels", phone: "", email: "", notes: "" },
+  { cat: "Subcontractors", name: "Sean", company: "SW Locksmith", phone: "", email: "", notes: "Doors / Locksmith" },
+  { cat: "Subcontractors", name: "Mauricio Trujillo", company: "Building Butler", phone: "805-705-9225", email: "", notes: "Construction support" },
+
+  { cat: "HVAC & Mechanical", name: "Jason Perez", company: "WestCoast Air", phone: "(805) 954-9195", email: "j.perez@westcoast-air.com", notes: "" },
+  { cat: "HVAC & Mechanical", name: "Charles", company: "CustomWineCellar", phone: "949-771-2712", email: "charles@customwinecellar.com", notes: "Wine cellar design" },
+
+  { cat: "Fire & Security", name: "Chip / Abe / Lina", company: "A&S / SecurePro (Fire)", phone: "", email: "", notes: "VESDA, life safety" },
+  { cat: "Fire & Security", name: "Rick Prinz", company: "PDK (Access Control)", phone: "", email: "", notes: "Brad, John?" },
+  { cat: "Fire & Security", name: "Mike / Dylan", company: "CCAV / SBAV (AV & Network)", phone: "", email: "", notes: "" },
+  { cat: "Fire & Security", name: "Eric Morrison", company: "Premier Security", phone: "", email: "Ebigmojosb@gmail.com", notes: "SR Global" },
+  { cat: "Fire & Security", name: "Brett de Campos", company: "Clearview Security", phone: "559-288-9752", email: "", notes: "Owner: Richie" },
+  { cat: "Fire & Security", name: "Nicola", company: "Netwatch (Monitoring)", phone: "", email: "", notes: "" },
+
+  { cat: "Vault & Storage", name: "Alex Young / Denise Runyan", company: "Janus International", phone: "", email: "", notes: "Also: Caleb, John Bilton" },
+  { cat: "Vault & Storage", name: "Conner Wells", company: "LuxerOne (SDV Units)", phone: "", email: "", notes: "" },
+  { cat: "Vault & Storage", name: "Michael Starkman", company: "KISS Locks", phone: "", email: "", notes: "" },
+  { cat: "Vault & Storage", name: "Corrado Boschetto", company: "ATA Motors", phone: "737-262-5035", email: "", notes: "" },
+  { cat: "Vault & Storage", name: "Glenn", company: "Malibu Gates", phone: "310-592-1918", email: "malibugates@yahoo.com", notes: "Gate" },
+  { cat: "Vault & Storage", name: "Derek Povah", company: "Coast Door", phone: "", email: "derek@coastdoor.net", notes: "Door supply & hardware" },
+
+  { cat: "Tech & Platforms", name: "Phil Vanderwoude", company: "Coworks", phone: "919-619-2025", email: "phil@coworks.com", notes: "Membership platform" },
+  { cat: "Tech & Platforms", name: "Maria Pellegrino", company: "Web Developer", phone: "317-627-2466", email: "mpellegrino1440@gmail.com", notes: "" },
+  { cat: "Tech & Platforms", name: "Kristin", company: "Graphics Design", phone: "773-983-3306", email: "", notes: "" },
+
+  { cat: "Marketing & Branding", name: "Mark Shoolery", company: "Branding", phone: "", email: "mark@markshoolery.com", notes: "markshoolery.com" },
+  { cat: "Marketing & Branding", name: "Curt Crawshaw", company: "Foundation Press", phone: "", email: "", notes: "Branding" },
+  { cat: "Marketing & Branding", name: "James Daly", company: "Photography", phone: "", email: "", notes: "" },
+  { cat: "Marketing & Branding", name: "Andy Chiang", company: "Drone", phone: "", email: "", notes: "" },
+  { cat: "Marketing & Branding", name: "Leanne Wood", company: "Montecito Journal", phone: "", email: "", notes: "" },
+  { cat: "Marketing & Branding", name: "Erik Torkells", company: "Siteline SB", phone: "917-209-6473", email: "sitelinesb@gmail.com", notes: "" },
+  { cat: "Marketing & Branding", name: "Jenny Kramer / Gina Telleson", company: "Santa Barbara Magazine", phone: "", email: "", notes: "" },
+
+  { cat: "Catering & Events", name: "Ashley / Hayden Felice", company: "Duo Catering", phone: "", email: "", notes: "" },
+  { cat: "Catering & Events", name: "Paul Lato", company: "Sommelier", phone: "", email: "", notes: "" },
+  { cat: "Catering & Events", name: "Brandon / Misty", company: "Good Lion Hospitality", phone: "", email: "", notes: "" },
+  { cat: "Catering & Events", name: "Sherry Villanueva", company: "ACME", phone: "", email: "", notes: "" },
+  { cat: "Catering & Events", name: "Lucas", company: "Bouchon", phone: "", email: "", notes: "" },
+  { cat: "Catering & Events", name: "Elly Iverson", company: "Sharon @ FSS Event Planner", phone: "", email: "", notes: "" },
+  { cat: "Catering & Events", name: "Adam Shoebridge", company: "Chef / Helena's Bakery", phone: "", email: "", notes: "Karen intro" },
+
+  { cat: "Moving & Logistics", name: "Karen Martin", company: "Curated Transitions", phone: "415-602-0949", email: "karen@curatedtransitions.com", notes: "" },
+  { cat: "Moving & Logistics", name: "Pete Tagles", company: "Superior Moving", phone: "", email: "", notes: "Lower end; rec by Karen Martin" },
+  { cat: "Moving & Logistics", name: "September", company: "Mammoth Moving", phone: "", email: "", notes: "" },
+  { cat: "Moving & Logistics", name: "Buck", company: "Piano & specialty moving", phone: "", email: "", notes: "" },
+
+  { cat: "Legal", name: "Peter Muzinich", company: "Estate Lawyer", phone: "", email: "", notes: "Several clients" },
+  { cat: "Legal", name: "Josh Rabinowitz", company: "", phone: "", email: "", notes: "Brad Lundgren, real estate" },
+  { cat: "Legal", name: "Jack Hume / Ian Smith", company: "", phone: "", email: "", notes: "$750/hr; revenue share, accredited investor" },
+  { cat: "Legal", name: "Brian Simas", company: "Simas Law", phone: "", email: "brian@simaslawfirm.com", notes: "ABC lawyer" },
+  { cat: "Legal", name: "Michael Brewer", company: "", phone: "", email: "Mike@calabc.com", notes: "ABC broker" },
+  { cat: "Legal", name: "Matt Olufs", company: "", phone: "", email: "", notes: "ABC broker/lawyer" },
+
+  { cat: "Finance & Accounting", name: "Gary Gray", company: "CPA", phone: "", email: "", notes: "QB: georgia@gvgraycpa.com" },
+  { cat: "Finance & Accounting", name: "JR Bookkeeping", company: "Bookkeeper", phone: "", email: "", notes: "" },
+  { cat: "Finance & Accounting", name: "Holly Onak", company: "American Riviera Bank", phone: "805.335.8121", email: "", notes: "Commercial" },
+  { cat: "Finance & Accounting", name: "Bobby Boyes", company: "American Riviera Bank", phone: "805.730.7864", email: "bboyes@arb.bank", notes: "" },
+
+  { cat: "Insurance", name: "Bobby Messenger", company: "Brasshear's Insurance", phone: "", email: "", notes: "" },
+  { cat: "Insurance", name: "Christopher Wise", company: "Insurance", phone: "", email: "", notes: "" },
+  { cat: "Insurance", name: "Steven Brooks", company: "Insurance / Appraiser", phone: "805-455-1070", email: "", notes: "" },
+
+  { cat: "Property", name: "Billy Brace", company: "Landlord / Property Manager", phone: "", email: "", notes: "" },
+
+  { cat: "Consultants & Advisors", name: "Michael Gibbons", company: "ADA Consultant", phone: "", email: "", notes: "" },
+  { cat: "Consultants & Advisors", name: "Dave Erchull", company: "GRASP / Global Risk Evaluations", phone: "520-241-2371", email: "dave.erchull@grevl.com", notes: "Art facility certification" },
+  { cat: "Consultants & Advisors", name: "Nancy Escher", company: "Art Appraiser", phone: "", email: "", notes: "Ojai; rec by Judy Larson" },
+  { cat: "Consultants & Advisors", name: "Elizabeth Stewart", company: "Art Appraiser", phone: "", email: "", notes: "Intro to Chubb, Northern Trust" },
+  { cat: "Consultants & Advisors", name: "Ferrari Group", company: "Art Logistics", phone: "", email: "", notes: "" },
+
+  { cat: "Operations", name: "Leah Shelton", company: "CV — VP Development", phone: "", email: "leah@canonvaults.com", notes: "Sales, events, photography" },
+  { cat: "Operations", name: "Maily", company: "Social Media", phone: "", email: "", notes: "" },
+  { cat: "Operations", name: "Jessica Solomon", company: "Connector", phone: "", email: "", notes: "" },
+  { cat: "Operations", name: "Angels' Family", company: "Cleaning", phone: "", email: "", notes: "Get contact from Marnie" },
+];
+
+function buildDirectory(filtered) {
+  const dir = document.getElementById('directory');
+  const noResults = document.getElementById('noResults');
+  dir.innerHTML = '';
+
+  const grouped = {};
+  filtered.forEach(c => { if (!grouped[c.cat]) grouped[c.cat] = []; grouped[c.cat].push(c); });
+
+  if (!Object.keys(grouped).length) { noResults.style.display = 'block'; return; }
+  noResults.style.display = 'none';
+
+  Object.entries(grouped).forEach(([cat, contacts]) => {
+    const section = document.createElement('div');
+    section.className = 'section';
+    section.innerHTML = `<div class="section-label">${cat}</div>`;
+
+    const cards = document.createElement('div');
+    cards.className = 'cards';
+
+    contacts.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      let html = `<div class="card-name">${c.name}</div>`;
+      if (c.company) html += `<div class="card-company">${c.company}</div>`;
+      const links = [];
+      if (c.phone) links.push(`<a href="tel:${c.phone.replace(/\D/g,'')}" ontouchstart="">📞 ${c.phone}</a>`);
+      if (c.email) links.push(`<a href="mailto:${c.email}" ontouchstart="">✉️ ${c.email}</a>`);
+      if (links.length) html += `<div class="card-contacts">${links.join('')}</div>`;
+      if (c.notes) html += `<div class="card-notes">${c.notes}</div>`;
+      card.innerHTML = html;
+      cards.appendChild(card);
+    });
+
+    section.appendChild(cards);
+    dir.appendChild(section);
+  });
+}
+
+function filterCards() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  buildDirectory(q ? data.filter(c =>
+    [c.name, c.company, c.cat, c.notes].some(f => f.toLowerCase().includes(q))
+  ) : data);
+}
+
+buildDirectory(data);
+</script>
+</body>
+</html>
