@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Canon Vaults · Final Inspection Checklist</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@400;500;600&display=swap');
+:root {
+  --bone:#f5f0e8;--parchment:#eae4d8;--warm:#d8d0c0;--mid:#7a7060;
+  --ink:#1a1612;--gold:#b8944a;--gold-lt:#d4aa6a;--red:#8b3a2a;
+  --green:#2a5c3f;--blue:#1e3a5f;--white:#ffffff;--border:rgba(0,0,0,0.08);--radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bone);color:var(--ink);font-size:14px;line-height:1.5;min-height:100vh;}
+
+header{background:var(--ink);padding:18px 20px 16px;border-bottom:2px solid var(--gold);}
+.header-inner{max-width:860px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--bone);letter-spacing:0.12em;text-transform:uppercase;line-height:1;}
+.logo span{color:var(--gold);}
+.header-meta{text-align:right;}
+.header-date{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:0.05em;}
+.header-sub{font-size:10px;color:var(--mid);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px;}
+
+.sub-header{background:var(--parchment);border-bottom:1px solid var(--border);padding:12px 20px;}
+.sub-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.doc-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:0.04em;}
+.doc-sub{font-size:11px;color:var(--mid);margin-top:1px;}
+.btn-print{background:var(--ink);color:var(--gold);border:none;border-radius:6px;padding:8px 16px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;}
+.btn-print:hover{background:#2a2420;}
+.btn-reset{background:none;border:1px solid var(--border);color:var(--mid);border-radius:6px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;white-space:nowrap;}
+
+.progress-bar-wrap{background:var(--white);border-bottom:1px solid var(--border);padding:14px 20px;}
+.progress-inner{max-width:860px;margin:0 auto;}
+.progress-stats{display:flex;gap:20px;margin-bottom:10px;flex-wrap:wrap;}
+.p-stat{display:flex;flex-direction:column;gap:1px;}
+.p-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);}
+.p-val{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;line-height:1;color:var(--ink);}
+.p-val.green{color:var(--green);}
+.p-val.gold{color:var(--gold);}
+.progress-track{height:6px;background:var(--warm);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width 0.4s ease;}
+
+.filter-bar{background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.filter-inner{max-width:860px;margin:0 auto;display:flex;padding:0 20px;gap:0;}
+.f-btn{flex-shrink:0;background:none;border:none;border-bottom:3px solid transparent;padding:11px 14px 9px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.03em;color:var(--mid);cursor:pointer;white-space:nowrap;}
+.f-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+main{max-width:860px;margin:0 auto;padding:20px;}
+
+.section-wrap{margin-bottom:24px;}
+.section-wrap[data-hidden="true"]{display:none;}
+.section-hd{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink);border-radius:var(--radius) var(--radius) 0 0;cursor:pointer;user-select:none;}
+.section-hd-icon{width:28px;height:28px;border-radius:50%;background:rgba(184,148,74,0.15);border:1px solid rgba(184,148,74,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.section-hd-text{flex:1;}
+.section-hd-label{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;color:var(--bone);letter-spacing:0.04em;}
+.section-hd-sub{font-size:10px;color:var(--mid);letter-spacing:0.08em;text-transform:uppercase;margin-top:1px;}
+.section-hd-prog{font-size:11px;font-weight:600;color:var(--gold-lt);white-space:nowrap;flex-shrink:0;}
+.section-hd-chevron{font-size:12px;color:var(--mid);flex-shrink:0;transition:transform 0.2s;}
+.section-hd.collapsed .section-hd-chevron{transform:rotate(-90deg);}
+
+.items-wrap{background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);overflow:hidden;}
+
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.12s;}
+.check-row:last-child{border-bottom:none;}
+.check-row:hover{background:var(--bone);}
+.check-row.done{background:rgba(42,92,63,0.04);}
+.check-box{width:20px;height:20px;flex-shrink:0;border:2px solid var(--warm);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;margin-top:1px;transition:background 0.15s,border-color 0.15s;}
+.check-row.done .check-box{background:var(--green);border-color:var(--green);}
+.check-row.na .check-box{background:var(--warm);border-color:var(--warm);font-size:9px;}
+.check-content{flex:1;min-width:0;}
+.check-text{font-size:13px;line-height:1.45;color:var(--ink);}
+.check-row.done .check-text{text-decoration:line-through;color:var(--mid);}
+.check-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;align-items:center;}
+.cbc-link{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;letter-spacing:0.06em;color:var(--blue);text-decoration:none;background:#dce8f8;border-radius:3px;padding:2px 7px;white-space:nowrap;}
+.cbc-link:hover{background:#ccdaf5;text-decoration:none;}
+.cbc-link::before{content:"§";font-size:9px;opacity:0.7;}
+.tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap;}
+.tag-critical{background:#fce8e4;color:#6b2a1e;}
+.tag-note{background:var(--parchment);color:var(--mid);}
+.tag-trade{background:#f0f7f0;color:var(--green);}
+.check-note{font-size:11px;color:var(--mid);margin-top:4px;line-height:1.4;font-style:italic;}
+
+.na-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bone);}
+.na-row:last-child{border-bottom:none;}
+.na-lbl{font-size:11px;color:var(--mid);font-style:italic;}
+
+.empty-section{padding:20px;text-align:center;color:var(--warm);font-size:13px;font-style:italic;}
+
+.sign-off-table{width:100%;border-collapse:collapse;}
+.sign-off-table th{background:var(--parchment);text-align:left;padding:10px 14px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);border-bottom:1px solid var(--border);}
+.sign-off-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top;}
+.sign-off-table tr:last-child td{border-bottom:none;}
+.sign-line{border-bottom:1px solid var(--warm);width:100%;height:28px;display:block;}
+.sig-label{font-size:10px;color:var(--mid);margin-top:3px;}
+
+/* N/A toggle */
+.na-toggle{margin-left:auto;flex-shrink:0;background:none;border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:10px;color:var(--mid);cursor:pointer;font-family:'Inter',sans-serif;}
+.na-toggle:hover{border-color:var(--warm);}
+.check-row.na .check-text{color:var(--warm);font-style:italic;}
+
+@media print {
+  header,#filter-bar,.btn-print,.btn-reset,.na-toggle{display:none!important;}
+  .section-hd{cursor:default;background:var(--parchment)!important;}
+  .section-hd-label{color:var(--ink)!important;}
+  .section-hd-sub,.section-hd-prog{color:var(--mid)!important;}
+  .section-hd-chevron{display:none;}
+  .items-wrap[style*="display:none"]{display:block!important;}
+  body{background:white;font-size:12px;}
+  .check-row:hover{background:none;}
+  .progress-bar-wrap{border:1px solid var(--border);}
+  main{padding:0;}
+  .section-wrap{break-inside:avoid-page;margin-bottom:16px;}
+  .check-row{break-inside:avoid;}
+  .sub-header{padding:8px 0;}
+  .progress-stats{margin-bottom:6px;}
+}
+
+@media(max-width:600px){
+  header{padding:14px 16px 12px;}
+  .sub-inner,.progress-stats{gap:8px;}
+  main{padding:14px 12px;}
+  .check-row{padding:11px 12px;}
+  .section-hd{padding:10px 12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">Canon <span>Vaults</span></div>
+      <div style="font-size:10px;color:var(--mid);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px;">Final Inspection Checklist</div>
+    </div>
+    <div class="header-meta">
+      <div class="header-date" id="live-date"></div>
+      <div class="header-sub">T. Grayling · COO</div>
+    </div>
+  </div>
+</header>
+
+<div class="sub-header">
+  <div class="sub-inner">
+    <div>
+      <div class="doc-title">Certificate of Occupancy — Pre-Inspection</div>
+      <div class="doc-sub">California Building Code 2022 · CBC Title 24, Part 2</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-reset" onclick="resetAll()">Reset All</button>
+      <button class="btn-print" onclick="window.print()">Print / PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-inner">
+    <div class="progress-stats">
+      <div class="p-stat"><div class="p-label">Total Items</div><div class="p-val" id="stat-total">0</div></div>
+      <div class="p-stat"><div class="p-label">Complete</div><div class="p-val green" id="stat-done">0</div></div>
+      <div class="p-stat"><div class="p-label">Remaining</div><div class="p-val gold" id="stat-rem">0</div></div>
+      <div class="p-stat"><div class="p-label">N/A</div><div class="p-val" id="stat-na" style="color:var(--mid)">0</div></div>
+      <div class="p-stat" style="margin-left:auto;text-align:right;"><div class="p-label">Progress</div><div class="p-val green" id="stat-pct">0%</div></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="filter-bar" id="filter-bar">
+  <div class="filter-inner">
+    <button class="f-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="f-btn" onclick="setFilter('admin',this)">Admin</button>
+    <button class="f-btn" onclick="setFilter('fire',this)">Fire &amp; Life Safety</button>
+    <button class="f-btn" onclick="setFilter('egress',this)">Egress</button>
+    <button class="f-btn" onclick="setFilter('access',this)">Accessibility</button>
+    <button class="f-btn" onclick="setFilter('structural',this)">Structural</button>
+    <button class="f-btn" onclick="setFilter('mech',this)">Mechanical</button>
+    <button class="f-btn" onclick="setFilter('electrical',this)">Electrical</button>
+    <button class="f-btn" onclick="setFilter('vault',this)">Vault &amp; Security</button>
+    <button class="f-btn" onclick="setFilter('special',this)">Special Occ.</button>
+    <button class="f-btn" onclick="setFilter('signoff',this)">Sign-offs</button>
+  </div>
+</div>
+
+<main id="main-content"></main>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const SECTIONS = [
+{
+  id:'admin', cat:'admin', icon:'📋',
+  label:'Administration & Pre-Inspection',
+  sub:'CBC Ch. 1 · Permit, Approved Plans, Inspections',
+  items:[
+    { id:'a1', text:'Approved stamped plans on site and accessible to inspector', cbc:[{label:'CBC §105.4',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#105.4'}], critical:true },
+    { id:'a2', text:'Valid building permit posted at job site in conspicuous location', cbc:[{label:'CBC §105.7',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#105.7'}] },
+    { id:'a3', text:'All required special inspection reports submitted and on file', cbc:[{label:'CBC §1705',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/17/special-inspections-and-tests#1705'}], critical:true },
+    { id:'a4', text:'Structural observation reports from engineer of record submitted', cbc:[{label:'CBC §1710',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/17/special-inspections-and-tests#1710'}] },
+    { id:'a5', text:'Statement of Special Inspections signed and submitted', cbc:[{label:'CBC §1705.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/17/special-inspections-and-tests#1705.3'}] },
+    { id:'a6', text:'Work completed per scope of approved plans (no unauthorized changes)', cbc:[{label:'CBC §106.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#106.3'}] },
+    { id:'a7', text:'Certificate of Occupancy application submitted to building department', cbc:[{label:'CBC §111.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#111.1'}], critical:true },
+    { id:'a8', text:'Energy compliance documentation (CF-1R, CF-2R, CF-3R) on file', cbc:[{label:'T24 §10-103',href:'https://up.codes/viewer/california/ca-residential-code-2022/chapter/1/scope-and-administration'}], note:'California Title 24, Part 6 — Energy Compliance Forms' },
+    { id:'a9', text:'CALGreen checklist (CGC Title 24 Part 11) completed and signed', cbc:[{label:'CGC §301',href:'https://up.codes/viewer/california/ca-green-code-2022/chapter/3/non-residential-mandatory-measures'}], note:'California Green Building Standards Code' },
+    { id:'a10', text:'All subcontractor permits finaled (electrical, mechanical, plumbing)', cbc:[{label:'CBC §105.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#105.1'}] },
+  ]
+},
+{
+  id:'occ', cat:'admin', icon:'🏛',
+  label:'Occupancy Classification & Mixed Use',
+  sub:'CBC Ch. 3 & 5 · Occupancy Groups, Separations',
+  items:[
+    { id:'o1', text:'Vault/storage areas classified Group S-1 (moderate-hazard storage)', cbc:[{label:'CBC §311.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/3/use-and-occupancy-classification#311.2'}], critical:true },
+    { id:'o2', text:'101 Society Lounge classified Group A-2 (food and drink consumption)', cbc:[{label:'CBC §303.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/3/use-and-occupancy-classification#303.1'}] },
+    { id:'o3', text:'Wine room/cellar occupancy classification confirmed with AHJ', cbc:[{label:'CBC §311',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/3/use-and-occupancy-classification#311'}], note:'S-1 or S-2 depending on contents — confirm with inspector' },
+    { id:'o4', text:'Mixed occupancy separations constructed per table (A-2 / S-1 fire barrier)', cbc:[{label:'CBC §508.4',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/5/general-building-heights-and-areas#508.4'}], critical:true },
+    { id:'o5', text:'Fire barrier/wall ratings verified at all occupancy separation boundaries', cbc:[{label:'CBC §707',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/7/fire-and-smoke-protection-features#707'}] },
+    { id:'o6', text:'Allowable area/height per occupancy type confirmed not exceeded', cbc:[{label:'CBC §504',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/5/general-building-heights-and-areas#504'}] },
+    { id:'o7', text:'Building address numbers posted — minimum 4 in., visible from street', cbc:[{label:'CBC §501.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/5/general-building-heights-and-areas#501.2'}] },
+  ]
+},
+{
+  id:'fire', cat:'fire', icon:'🔥',
+  label:'Fire & Life Safety',
+  sub:'CBC Ch. 9 · Sprinklers, Alarms, Extinguishing Systems',
+  items:[
+    { id:'f1', text:'Automatic fire sprinkler system installed throughout (NFPA 13)', cbc:[{label:'CBC §903.3.1.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#903.3.1.1'}], critical:true },
+    { id:'f2', text:'Sprinkler system inspection/test report from licensed contractor on file', cbc:[{label:'CBC §903.5',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#903.5'}], critical:true },
+    { id:'f3', text:'Clean-agent fire suppression system in vault/server areas (FM-200 or equiv.)', cbc:[{label:'CBC §904.7',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#904.7'}], note:'NFPA 2001 — confirm with fire marshal for vault room suppression' },
+    { id:'f4', text:'Clean-agent system inspected and acceptance tested — report on file', cbc:[{label:'CBC §904.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#904.2'}] },
+    { id:'f5', text:'Fire alarm system installed, tested, and acceptance certificate on file', cbc:[{label:'CBC §907.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907.1'}], critical:true },
+    { id:'f6', text:'Manual fire alarm pull stations at all required exit locations', cbc:[{label:'CBC §907.4.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907.4.2'}] },
+    { id:'f7', text:'Smoke detectors installed in all required areas (corridors, rooms >1000 sf)', cbc:[{label:'CBC §907.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907.2'}] },
+    { id:'f8', text:'Audible/visible alarm notification devices coverage verified', cbc:[{label:'CBC §907.5.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907.5.2'}] },
+    { id:'f9', text:'Portable fire extinguishers installed at required intervals', cbc:[{label:'CBC §906',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#906'}] },
+    { id:'f10', text:'Fire department connections (FDC) accessible and unobstructed', cbc:[{label:'CBC §912',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#912'}] },
+    { id:'f11', text:'Fire dampers installed at all rated wall/floor penetrations', cbc:[{label:'CBC §717',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/7/fire-and-smoke-protection-features#717'}] },
+    { id:'f12', text:'Penetrations in fire-rated assemblies sealed with listed firestop systems', cbc:[{label:'CBC §714',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/7/fire-and-smoke-protection-features#714'}], critical:true },
+    { id:'f13', text:'Knox Box installed at main entry per fire department requirements', cbc:[{label:'CFC §506',href:'https://up.codes/viewer/california/ca-fire-code-2022/chapter/5/fire-service-features#506'}], note:'California Fire Code §506 — key box for fire access' },
+    { id:'f14', text:'Emergency voice/alarm communication system functional (if required)', cbc:[{label:'CBC §907.5.2.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907.5.2.2'}] },
+  ]
+},
+{
+  id:'egress', cat:'egress', icon:'🚪',
+  label:'Means of Egress',
+  sub:'CBC Ch. 10 · Doors, Corridors, Exit Signs, Illumination',
+  items:[
+    { id:'e1', text:'Number of exits provided meets minimum for A-2 and S-1 occupant loads', cbc:[{label:'CBC §1006',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1006'}], critical:true },
+    { id:'e2', text:'Exit access corridor widths minimum 44 in. (28 in. if occupant load ≤49)', cbc:[{label:'CBC §1005.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1005.1'}] },
+    { id:'e3', text:'All exit doors swing in direction of egress travel', cbc:[{label:'CBC §1010.1.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010.1.2'}] },
+    { id:'e4', text:'Exit door hardware operable with single motion — no key required from inside', cbc:[{label:'CBC §1010.1.9',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010.1.9'}], critical:true },
+    { id:'e5', text:'Door widths minimum 32 in. clear (36 in. accessible doors)', cbc:[{label:'CBC §1010.1.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010.1.1'}] },
+    { id:'e6', text:'Hardware height 34–48 in. above floor at all egress doors', cbc:[{label:'CBC §1010.1.9.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010.1.9.1'}] },
+    { id:'e7', text:'Illuminated exit signs installed at all required locations (green or red)', cbc:[{label:'CBC §1013',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1013'}] },
+    { id:'e8', text:'Exit signs have backup power (battery or generator) — tested 90 min.', cbc:[{label:'CBC §1013.6.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1013.6.3'}] },
+    { id:'e9', text:'Emergency egress lighting at 1 fc minimum throughout exit paths', cbc:[{label:'CBC §1014',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1014'}] },
+    { id:'e10', text:'Emergency lighting tested — 90-minute backup duration confirmed', cbc:[{label:'CBC §1014.4',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1014.4'}] },
+    { id:'e11', text:'Travel distance from any point to nearest exit ≤200 ft (S-1) / ≤250 ft (A-2 sprinklered)', cbc:[{label:'CBC §1017',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1017'}] },
+    { id:'e12', text:'Common path of egress travel does not exceed code limits', cbc:[{label:'CBC §1006.2.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1006.2.1'}] },
+    { id:'e13', text:'Stairway handrails continuous, 34–38 in. height, graspable profile', cbc:[{label:'CBC §1012',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1012'}] },
+    { id:'e14', text:'Stair risers ≤7 in., treads ≥11 in., uniform within flight', cbc:[{label:'CBC §1011.5',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1011.5'}] },
+    { id:'e15', text:'Exit discharge paths free of obstructions leading to public way', cbc:[{label:'CBC §1028',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1028'}] },
+    { id:'e16', text:'Electromagnetic locks (if any) release on fire alarm activation', cbc:[{label:'CBC §1010.1.9.8',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010.1.9.8'}], critical:true, note:'Vault access control must fail-safe on fire alarm and power loss' },
+  ]
+},
+{
+  id:'access', cat:'access', icon:'♿',
+  label:'Accessibility — Title 24',
+  sub:'CBC Ch. 11B · Accessible Routes, Facilities, Signage',
+  items:[
+    { id:'ac1', text:'Accessible route from public way to building entrance provided', cbc:[{label:'CBC §11B-206',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/accessible-routes#11B-206'}], critical:true },
+    { id:'ac2', text:'Accessible parking provided at required ratio — properly signed and striped', cbc:[{label:'CBC §11B-208',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/parking-spaces#11B-208'}] },
+    { id:'ac3', text:'Accessible entrance — level landing, maneuvering clearances at door', cbc:[{label:'CBC §11B-404',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/doors-doorways-and-gates#11B-404'}] },
+    { id:'ac4', text:'Accessible route to all public areas (lounge, gallery, bar, restrooms)', cbc:[{label:'CBC §11B-206.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/accessible-routes#11B-206.2'}], critical:true },
+    { id:'ac5', text:'Floor surfaces firm, stable, slip-resistant — transitions ≤1/4 in. vertical', cbc:[{label:'CBC §11B-302',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/floor-surfaces#11B-302'}] },
+    { id:'ac6', text:'Ramp slopes ≤1:12 (8.33%), width ≥48 in., handrails both sides', cbc:[{label:'CBC §11B-405',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/ramps#11B-405'}] },
+    { id:'ac7', text:'Accessible restroom(s) provided — layout, fixtures, and hardware compliant', cbc:[{label:'CBC §11B-603',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/toilet-facilities-and-bathing-facilities#11B-603'}], critical:true },
+    { id:'ac8', text:'Water closet height 17–19 in., grab bars at correct locations and dimensions', cbc:[{label:'CBC §11B-604',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/water-closets-and-toilet-compartments#11B-604'}] },
+    { id:'ac9', text:'Lavatory centerline 18 in. from side wall, knee clearance below', cbc:[{label:'CBC §11B-606',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/lavatories-and-sinks#11B-606'}] },
+    { id:'ac10', text:'Elevator/lift installed if required for multi-level accessible route', cbc:[{label:'CBC §11B-206.2.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/accessible-routes#11B-206.2.3'}] },
+    { id:'ac11', text:'Accessible signage (Braille/tactile) at all permanent rooms and spaces', cbc:[{label:'CBC §11B-703',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/signs#11B-703'}] },
+    { id:'ac12', text:'Accessible bar/counter section ≤34 in. AFF provided in lounge/bar area', cbc:[{label:'CBC §11B-904',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/check-out-aisles-and-service-counters#11B-904'}], note:'At least one accessible transaction surface required' },
+    { id:'ac13', text:'Path of travel upgrades completed per permit (Title 24 accessibility trigger)', cbc:[{label:'CBC §11B-202',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/11b-accessibility/scoping-requirements#11B-202'}] },
+  ]
+},
+{
+  id:'structural', cat:'structural', icon:'🏗',
+  label:'Structural & Building Envelope',
+  sub:'CBC Ch. 16–23 · Loads, Concrete, Masonry, Waterproofing',
+  items:[
+    { id:'st1', text:'Final structural framing inspection approved by building department', cbc:[{label:'CBC §110.3.4',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#110.3.4'}], critical:true },
+    { id:'st2', text:'Vault room reinforced concrete walls and floor slab as engineered', cbc:[{label:'CBC §1901',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/19/concrete#1901'}], critical:true, note:'Vault structural report and special inspection records required' },
+    { id:'st3', text:'Concrete placement/compaction special inspection reports on file', cbc:[{label:'CBC §1705.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/17/special-inspections-and-tests#1705.3'}] },
+    { id:'st4', text:'Steel connections/welds inspected per special inspection program', cbc:[{label:'CBC §1705.12',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/17/special-inspections-and-tests#1705.12'}] },
+    { id:'st5', text:'Waterproofing/dampproofing at below-grade walls per plans', cbc:[{label:'CBC §1805',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/18/soils-and-foundations#1805'}] },
+    { id:'st6', text:'Roof framing, sheathing, and roofing system installation per approved plans', cbc:[{label:'CBC §1503',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/15/roof-assemblies-and-rooftop-structures#1503'}] },
+    { id:'st7', text:'Exterior wall cladding/veneer attached per engineered drawings', cbc:[{label:'CBC §1402',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/14/exterior-walls#1402'}] },
+    { id:'st8', text:'Seismic anchorage of equipment (HVAC, generators, vault equipment) verified', cbc:[{label:'CBC §1621',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/16/structural-design#1621'}] },
+    { id:'st9', text:'Interior non-structural walls braced per CBC lateral requirements', cbc:[{label:'CBC §1604',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/16/structural-design#1604'}] },
+    { id:'st10', text:'Glazing in hazardous locations is safety glazing — labeled', cbc:[{label:'CBC §2406',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/24/glass-and-glazing#2406'}] },
+  ]
+},
+{
+  id:'mech', cat:'mech', icon:'🌡',
+  label:'Mechanical, Plumbing & Energy',
+  sub:'CMC / CPC / Title 24 Part 6 · HVAC, Plumbing, Energy',
+  items:[
+    { id:'m1', text:'HVAC system installation inspected and final permit issued (CMC)', cbc:[{label:'CMC §304',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/3/general-requirements#304'}], note:'California Mechanical Code — separate AHJ permit' },
+    { id:'m2', text:'Vault climate system (temp 60–72°F, RH 40–55%) operational and tested', cbc:[{label:'CMC §1116',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/11/refrigeration#1116'}], critical:true, note:'Document set-point testing and performance log' },
+    { id:'m3', text:'Redundant HVAC with failover confirmed for vault environment control', cbc:[{label:'CMC §300',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/3/general-requirements'}], note:'Best practice — confirm with vault commissioning engineer' },
+    { id:'m4', text:'Mechanical ventilation rates per occupancy type verified (A-2, S-1)', cbc:[{label:'CMC §402',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/4/ventilation-air#402'}] },
+    { id:'m5', text:'HVAC balanced air report and TAB (test, adjust, balance) on file', cbc:[{label:'T24 §120.2',href:'https://up.codes/viewer/california/ca-energy-code-2022/chapter/1/purpose#120'}] },
+    { id:'m6', text:'Plumbing rough and final inspections approved — permit finaled (CPC)', cbc:[{label:'CPC §103',href:'https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/1/administration#103'}], note:'California Plumbing Code — separate permit' },
+    { id:'m7', text:'Restroom fixture count meets minimum for occupancy load', cbc:[{label:'CBC §2902',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/29/plumbing-systems#2902'}], critical:true },
+    { id:'m8', text:'Hot water provided to all required fixtures — min. 110°F at point of use', cbc:[{label:'CPC §507',href:'https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/5/water-heaters#507'}] },
+    { id:'m9', text:'Backflow prevention devices installed and tested', cbc:[{label:'CPC §603',href:'https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/6/water-supply-and-distribution#603'}] },
+    { id:'m10', text:'Energy code compliance verified — HVAC efficiency, lighting controls', cbc:[{label:'T24 §100.0',href:'https://up.codes/viewer/california/ca-energy-code-2022/chapter/1/purpose'}], note:'Title 24 Part 6 — confirmed via HERS rater or energy consultant' },
+    { id:'m11', text:'Wine cellar refrigeration system commissioned — temp log documented', cbc:[{label:'CMC §1101',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/11/refrigeration#1101'}], note:'Refrigerant type and charge to be documented for permit files' },
+  ]
+},
+{
+  id:'electrical', cat:'electrical', icon:'⚡',
+  label:'Electrical',
+  sub:'CEC (Title 24 Part 3) · Service, Panels, Lighting, Emergency Power',
+  items:[
+    { id:'el1', text:'Electrical permit finaled — all rough and final inspections approved', cbc:[{label:'CEC §89',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}], note:'California Electrical Code — separate AHJ permit', critical:true },
+    { id:'el2', text:'Main service entrance, meter, and main distribution panel inspected', cbc:[{label:'CEC §230',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'el3', text:'All panel directories labeled and accurate', cbc:[{label:'CEC §408.4',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'el4', text:'GFCI protection at all required locations (wet areas, within 6 ft of sink)', cbc:[{label:'CEC §210.8',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'el5', text:'AFCI protection in required areas per CEC', cbc:[{label:'CEC §210.12',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'el6', text:'Emergency generator or UPS installed — vault life safety systems backed up', cbc:[{label:'CBC §2702',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/27/electrical#2702'}], critical:true },
+    { id:'el7', text:'Generator load test completed — transfer time and runtime documented', cbc:[{label:'CBC §2702.2',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/27/electrical#2702.2'}] },
+    { id:'el8', text:'Lighting controls (occupancy sensors, dimmers) per Title 24 Part 6', cbc:[{label:'T24 §130.1',href:'https://up.codes/viewer/california/ca-energy-code-2022/chapter/1/purpose'}], note:'Mandatory lighting controls for non-residential spaces' },
+    { id:'el9', text:'Emergency lighting circuits on dedicated branch, properly labeled', cbc:[{label:'CEC §700',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'el10', text:'Vault power circuits properly sized and protected per equipment specs', cbc:[{label:'CEC §215',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'el11', text:'Low-voltage systems (security, AV, data) in conduit where required', cbc:[{label:'CEC §725',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+  ]
+},
+{
+  id:'vault', cat:'vault', icon:'🔐',
+  label:'Vault Infrastructure & Security',
+  sub:'Special Construction · Vault Doors, Access Control, Monitoring',
+  items:[
+    { id:'v1', text:'Vault door(s) installed per manufacturer spec — UL/TL rating as specified', cbc:[{label:'CBC §422',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/4/special-detailed-requirements#422'}], critical:true, note:'Document UL listing class (e.g. TL-30, TRTL-30x6) — retain manufacturer cert' },
+    { id:'v2', text:'Vault door hinges, frame, and anchor bolts inspected', cbc:[{label:'CBC §1905',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/19/concrete#1905'}], note:'Refer to structural engineer anchor bolt spec' },
+    { id:'v3', text:'Vault room wall/floor/ceiling construction verified per engineered drawings', cbc:[{label:'CBC §1901',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/19/concrete#1901'}], critical:true },
+    { id:'v4', text:'Access control system (card readers, biometric, keypad) commissioned', cbc:[{label:'CEC §725',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}], note:'Low-voltage access control system — document panel location and programming' },
+    { id:'v5', text:'CCTV/surveillance system fully operational — coverage map documented', cbc:[{label:'CEC §725',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'v6', text:'Intrusion alarm system (motion, door contacts, glass break) commissioned', cbc:[{label:'CEC §760',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'v7', text:'Central monitoring station connection confirmed and tested', cbc:[{label:'CEC §760',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+    { id:'v8', text:'Safe deposit/locker system installed — locks, drawers, master key documented', cbc:[{label:'CBC §422',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/4/special-detailed-requirements#422'}] },
+    { id:'v9', text:'Vault ventilation/climate system operational and alarmed on failure', cbc:[{label:'CMC §300',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/3/general-requirements'}], critical:true },
+    { id:'v10', text:'Emergency release mechanism inside vault tested and operational', cbc:[{label:'CBC §1010.1.9',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010.1.9'}], critical:true, note:'Persons must be able to egress vault from inside at all times' },
+    { id:'v11', text:'Vault fire detection integrated with building fire alarm system', cbc:[{label:'CBC §907',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907'}] },
+    { id:'v12', text:'Interlock between vault clean-agent system and ventilation confirmed', cbc:[{label:'NFPA §2001',href:'https://www.nfpa.org/codes-and-standards/nfpa-2001-standard-on-clean-agent-fire-extinguishing-systems'}], note:'NFPA 2001 — system must shut HVAC before agent discharge' },
+  ]
+},
+{
+  id:'special', cat:'special', icon:'🍷',
+  label:'Special Occupancies — Lounge, Bar & Wine Room',
+  sub:'Assembly A-2 · CFC · ABC · Health Code',
+  items:[
+    { id:'sp1', text:'Assembly A-2 occupant load posted — certificate from building dept.', cbc:[{label:'CBC §1004',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1004'}], critical:true },
+    { id:'sp2', text:'Occupant load sign posted in lounge/assembly area', cbc:[{label:'CBC §1004.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1004.3'}] },
+    { id:'sp3', text:'Bar area hood and suppression system (Ansul or equiv.) inspected', cbc:[{label:'CMC §508',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/5/exhaust-systems#508'}], note:'Type I hood required over cooking equipment — CFC §609' },
+    { id:'sp4', text:'Kitchen/bar grease interceptor installed where required (CPC)', cbc:[{label:'CPC §1014',href:'https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/10/traps-cleanouts-and-backwater-valves#1014'}] },
+    { id:'sp5', text:'Wine cellar/room refrigeration equipment per CMC requirements', cbc:[{label:'CMC §1101',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/11/refrigeration#1101'}] },
+    { id:'sp6', text:'Proper ventilation in wine storage areas (humidity / temperature)', cbc:[{label:'CMC §402',href:'https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/4/ventilation-air#402'}] },
+    { id:'sp7', text:'ABC (Alcoholic Beverage Control) license application submitted / approved', cbc:[{label:'N/A — ABC',href:'https://www.abc.ca.gov/licensing/'}], note:'California ABC — separate licensing agency, not CBC' },
+    { id:'sp8', text:'Health department permit for food/beverage service submitted', cbc:[{label:'HSC §113700',href:'https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=113700.&lawCode=HSC'}], note:'CA Health & Safety Code — County Environmental Health' },
+    { id:'sp9', text:'Outdoor seating/terrace egress and accessible route compliant', cbc:[{label:'CBC §1028',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1028'}] },
+    { id:'sp10', text:'Lounge audio/visual systems complete — no cable management issues', cbc:[{label:'CEC §725',href:'https://up.codes/viewer/california/ca-electrical-code-2022/'}] },
+  ]
+},
+{
+  id:'signoff', cat:'signoff', icon:'✍',
+  label:'Final Sign-offs & Punch List',
+  sub:'Inspector Sign-off, Close-out, Certificate of Occupancy',
+  items:[
+    { id:'so1', text:'All deferred submittals reviewed and approved by AHJ', cbc:[{label:'CBC §106.3.4',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#106.3.4'}], critical:true },
+    { id:'so2', text:'All open correction notices (redlines) resolved and re-inspected', cbc:[{label:'CBC §110.7',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#110.7'}], critical:true },
+    { id:'so3', text:'Architect / Engineer of Record sign-off letter on file', cbc:[{label:'CBC §1705',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/17/special-inspections-and-tests#1705'}] },
+    { id:'so4', text:'All sub-trade permits finaled (electrical, mechanical, plumbing, fire)', cbc:[{label:'CBC §105.3',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#105.3'}], critical:true },
+    { id:'so5', text:'Commissioning report for HVAC, fire alarm, and suppression submitted', cbc:[{label:'T24 §120.8',href:'https://up.codes/viewer/california/ca-energy-code-2022/chapter/1/purpose'}] },
+    { id:'so6', text:'As-built drawings (record drawings) delivered to building department', cbc:[{label:'CBC §107.4',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#107.4'}] },
+    { id:'so7', text:'Operations and maintenance manuals for all systems collected', cbc:[{label:'T24 §10-111',href:'https://up.codes/viewer/california/ca-energy-code-2022/chapter/1/purpose'}] },
+    { id:'so8', text:'All warranties collected and filed (equipment, construction, waterproofing)', cbc:[{label:'N/A',href:'#'}], note:'Not a code requirement — internal Canon Vaults recordkeeping' },
+    { id:'so9', text:'Certificate of Occupancy issued and posted at entrance', cbc:[{label:'CBC §111.1',href:'https://up.codes/viewer/california/ca-building-code-2022/chapter/1/scope-and-administration#111.1'}], critical:true },
+    { id:'so10', text:'All keys, access codes, and credentials transferred to operations team', cbc:[{label:'N/A',href:'#'}], note:'Internal handoff protocol' },
+  ]
+},
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────────────
+const STORE_KEY = 'cv_checklist_v1';
+let state = {};
+let activeFilter = 'all';
+
+function loadState() {
+  try { state = JSON.parse(localStorage.getItem(STORE_KEY)||'{}'); } catch(e) { state={}; }
+}
+function saveState() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+
+// ─── RENDER ────────────────────────────────────────────────────────────────────
+function getItemState(id) { return state[id] || 'none'; } // 'none' | 'done' | 'na'
+
+function render() {
+  const main = document.getElementById('main-content');
+  main.innerHTML = '';
+  SECTIONS.forEach(sec => {
+    const visible = activeFilter === 'all' || sec.cat === activeFilter;
+    const wrap = document.createElement('div');
+    wrap.className = 'section-wrap';
+    wrap.dataset.hidden = visible ? 'false' : 'true';
+
+    const doneCount = sec.items.filter(i => getItemState(i.id) === 'done').length;
+    const naCount   = sec.items.filter(i => getItemState(i.id) === 'na').length;
+    const total     = sec.items.length;
+    const active    = total - naCount;
+    const pct       = active > 0 ? Math.round((doneCount / active) * 100) : 100;
+    const collapsed = state['__sec_' + sec.id] === 'collapsed';
+
+    wrap.innerHTML = `
+      <div class="section-hd ${collapsed?'collapsed':''}" onclick="toggleSection('${sec.id}')">
+        <div class="section-hd-icon">${sec.icon}</div>
+        <div class="section-hd-text">
+          <div class="section-hd-label">${sec.label}</div>
+          <div class="section-hd-sub">${sec.sub}</div>
+        </div>
+        <div class="section-hd-prog">${doneCount}/${active} · ${pct}%</div>
+        <div class="section-hd-chevron">▾</div>
+      </div>
+      <div class="items-wrap" id="items-${sec.id}" style="${collapsed?'display:none':''}">
+        ${sec.items.map(item => renderItem(item)).join('')}
+      </div>`;
+    main.appendChild(wrap);
+  });
+  updateStats();
+}
+
+function renderItem(item) {
+  const s = getItemState(item.id);
+  const cbcLinks = (item.cbc||[]).map(c =>
+    `<a class="cbc-link" href="${c.href}" target="_blank" rel="noopener noreferrer">${c.label}</a>`
+  ).join('');
+  const criticalTag = item.critical ? '<span class="tag tag-critical">Critical</span>' : '';
+  const checkMark = s === 'done' ? '✓' : s === 'na' ? 'N/A' : '';
+  return `
+    <div class="check-row ${s}" id="row-${item.id}" onclick="cycleItem('${item.id}')">
+      <div class="check-box">${checkMark}</div>
+      <div class="check-content">
+        <div class="check-text">${item.text}</div>
+        <div class="check-meta">
+          ${cbcLinks}
+          ${criticalTag}
+          ${item.note?`<span class="tag tag-note">${item.note}</span>`:''}
+        </div>
+      </div>
+      <button class="na-toggle" onclick="setNA(event,'${item.id}')" title="Mark N/A">${s==='na'?'Undo N/A':'N/A'}</button>
+    </div>`;
+}
+
+function cycleItem(id) {
+  const s = getItemState(id);
+  state[id] = s === 'none' ? 'done' : s === 'done' ? 'none' : 'none';
+  saveState();
+  refreshItem(id);
+  updateStats();
+}
+
+function setNA(e, id) {
+  e.stopPropagation();
+  const s = getItemState(id);
+  state[id] = s === 'na' ? 'none' : 'na';
+  saveState();
+  refreshItem(id);
+  updateStats();
+}
+
+function refreshItem(id) {
+  const row = document.getElementById('row-' + id);
+  if (!row) return;
+  const sec = SECTIONS.find(s => s.items.some(i => i.id === id));
+  const item = (sec||{items:[]}).items.find(i => i.id === id);
+  if (!sec || !item) return;
+  row.outerHTML = renderItem(item);
+  // update section header progress
+  const secWrap = document.querySelector(`#items-${sec.id}`);
+  if (secWrap) {
+    const hd = secWrap.previousElementSibling;
+    const doneCount = sec.items.filter(i => getItemState(i.id) === 'done').length;
+    const naCount   = sec.items.filter(i => getItemState(i.id) === 'na').length;
+    const active    = sec.items.length - naCount;
+    const pct       = active > 0 ? Math.round((doneCount / active) * 100) : 100;
+    hd.querySelector('.section-hd-prog').textContent = `${doneCount}/${active} · ${pct}%`;
+  }
+}
+
+function toggleSection(id) {
+  const el = document.getElementById('items-' + id);
+  const hd = el.previousElementSibling;
+  const collapsed = el.style.display === 'none';
+  el.style.display = collapsed ? '' : 'none';
+  hd.classList.toggle('collapsed', !collapsed);
+  state['__sec_' + id] = collapsed ? '' : 'collapsed';
+  saveState();
+}
+
+function updateStats() {
+  let total = 0, done = 0, na = 0;
+  SECTIONS.forEach(s => {
+    s.items.forEach(i => {
+      total++;
+      const st = getItemState(i.id);
+      if (st === 'done') done++;
+      if (st === 'na') na++;
+    });
+  });
+  const active = total - na;
+  const pct = active > 0 ? Math.round((done / active) * 100) : 100;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-done').textContent  = done;
+  document.getElementById('stat-rem').textContent   = active - done;
+  document.getElementById('stat-na').textContent    = na;
+  document.getElementById('stat-pct').textContent   = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ─── FILTER ────────────────────────────────────────────────────────────────────
+function setFilter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.section-wrap').forEach(wrap => {
+    const sec = SECTIONS.find(s => 'items-' + s.id === wrap.querySelector('[id^="items-"]')?.id);
+    if (!sec) return;
+    wrap.dataset.hidden = (cat === 'all' || sec.cat === cat) ? 'false' : 'true';
+  });
+}
+
+// ─── RESET ─────────────────────────────────────────────────────────────────────
+function resetAll() {
+  if (!confirm('Reset all checklist items? This cannot be undone.')) return;
+  localStorage.removeItem(STORE_KEY);
+  state = {};
+  render();
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+document.getElementById('live-date').textContent =
+  new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+loadState();
+render();
+</script>
+</body>
+</html>
