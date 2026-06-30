@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Inspection Checklist — Canon Vaults</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    background: #fff;
+    color: #111;
+    line-height: 1.5;
+  }
+
+  header {
+    padding: 20px 24px 16px;
+    border-bottom: 2px solid #111;
+  }
+
+  header h1 {
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  header .meta {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  .progress-bar-wrap {
+    background: #f4f4f4;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .progress-bar-track {
+    flex: 1;
+    height: 3px;
+    background: #ccc;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: #111;
+    transition: width 0.2s;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: #555;
+    white-space: nowrap;
+    min-width: 90px;
+    text-align: right;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  .section {
+    margin-top: 28px;
+    border: 1px solid #ccc;
+  }
+
+  .section-header {
+    padding: 10px 16px;
+    background: #f4f4f4;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-header:hover { background: #eaeaea; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .section-meta {
+    font-size: 11px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-toggle { font-size: 10px; }
+
+  .subsection-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+    padding: 8px 16px 4px;
+    border-top: 1px solid #e0e0e0;
+    background: #fafafa;
+  }
+
+  .subsection-label:first-child { border-top: none; }
+
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #fafafa; }
+  .item.checked { background: #f9f9f9; }
+
+  .item input[type="checkbox"] {
+    margin-top: 2px;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #111;
+  }
+
+  .item-content { flex: 1; }
+
+  .item-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #111;
+  }
+
+  .item.checked .item-text {
+    text-decoration: line-through;
+    color: #999;
+  }
+
+  .refs {
+    margin-top: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .code-ref {
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    color: #0055cc;
+    background: #f0f4ff;
+    border: 1px solid #c0d0ee;
+    padding: 1px 6px;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .code-ref:hover {
+    background: #dce8ff;
+    text-decoration: underline;
+  }
+
+  .note-block {
+    margin-top: 24px;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    background: #fafafa;
+    font-size: 11px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 12px; }
+    .container { padding: 0 12px 40px; }
+    .item { padding: 9px 12px; }
+    .section-header { padding: 10px 12px; }
+    .subsection-label { padding: 8px 12px 4px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Final Inspection Checklist</h1>
+  <div class="meta">101 W Canon Perdido St · Santa Barbara CA · 2022 California Codes Title 24 · City Ordinance No. 6093</div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 0 complete</div>
+</div>
+
+<div class="container">
+
+<!-- EGRESS & LIFE SAFETY -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Egress &amp; Life Safety</span>
+    <span class="section-meta"><span id="count-egress"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-egress">
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Exit doors swing in direction of egress travel; hardware operable without key or special knowledge</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1010" target="_blank">CBC §1010.1.9</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Exit signs at every exit door and corridor intersection; internally illuminated</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1013" target="_blank">CBC §1013.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Exit signs on emergency power; minimum 90-minute battery backup</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/27/electrical#2702" target="_blank">CBC §2702.2.3</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Means of egress illuminated to minimum 1 fc at floor level along all egress paths</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1008" target="_blank">CBC §1008.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Stairways illuminated to minimum 10 fc when in use — new 2022 requirement</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1008" target="_blank">CBC §1008.2.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Emergency egress lighting on independent circuit; auto-activates on power failure; 90-min minimum backup</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1008" target="_blank">CBC §1008.3</a><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/27/electrical#2702" target="_blank">CBC §2702.2.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Exit access travel distance within allowable limits for occupancy type</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1017" target="_blank">CBC §1017</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All corridors and aisles — minimum 44" clear width</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1020" target="_blank">CBC §1020.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Dead-end corridors do not exceed 20' (non-sprinklered) or 50' (sprinklered)</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1020" target="_blank">CBC §1020.4</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Occupant load sign posted at main exit if occupant load ≥ 50</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1004" target="_blank">CBC §1004.9</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Doors at accessible means of egress comply with hardware and width requirements</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/10/means-of-egress#1009" target="_blank">CBC §1009.2</a></div></div></div>
+  </div>
+</div>
+
+<!-- FIRE PROTECTION -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Fire Protection</span>
+    <span class="section-meta"><span id="count-fire"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-fire">
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Sprinkler system installed, inspected, and tagged per permit</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#903" target="_blank">CBC §903</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Fire alarm/smoke detection system operational; pull stations at exits</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907" target="_blank">CBC §907</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">VESDA or equivalent early detection — coverage confirmed per permit plans</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems#907" target="_blank">CBC §907.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Fire extinguishers mounted and tagged; Class K in bar/lounge area</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/9/fire-protection-systems" target="_blank">CFC §906 / §904.12</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Exhaust hood and suppression system above any heat-producing cooking equipment</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/5/exhaust-systems#509" target="_blank">CMC §509</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All fire-rated assemblies intact — no unsealed penetrations in rated walls, floors, or ceilings</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/7/fire-and-smoke-protection-features#703" target="_blank">CBC §703</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Self-closing hardware on all rated corridor and stair doors</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/7/fire-and-smoke-protection-features#716" target="_blank">CBC §716</a></div></div></div>
+  </div>
+</div>
+
+<!-- ELECTRICAL — GENERAL -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Electrical — General</span>
+    <span class="section-meta"><span id="count-elec"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-elec">
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Panel labeled; all circuits identified; no open knockouts</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/4/equipment-for-general-use#408" target="_blank">CEC §408.4</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Panel clearance: 36" deep × 30" wide × 78" high clear working space</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/1/general#110" target="_blank">CEC §110.26</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Panel not installed in a bathroom</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#240" target="_blank">CEC §240.24(E)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All wiring in conduit or MC cable — no exposed Romex in commercial occupancy</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/3/wiring-methods-and-materials#300" target="_blank">CEC §300.3 / §330</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All junction boxes closed and covered; no open boxes with conductors</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/3/wiring-methods-and-materials#314" target="_blank">CEC §314.28</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Dedicated circuits for dishwasher, ice machine, and any cooking equipment</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.11(C)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All circuit breakers labeled and accessible; no tandem breakers beyond panel rating</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/4/equipment-for-general-use#408" target="_blank">CEC §408.4</a></div></div></div>
+  </div>
+</div>
+
+<!-- GFCI & AFCI -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Electrical — GFCI &amp; AFCI</span>
+    <span class="section-meta"><span id="count-gfci"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-gfci">
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All bathroom receptacles GFCI protected</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(1)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All receptacles within 6' of any sink GFCI protected</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(5)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All bar/kitchen countertop receptacles GFCI protected</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(2)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Dishwasher branch circuit GFCI protected — added 2022</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(7)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All laundry area receptacles GFCI protected — added 2022</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(10)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Outdoor receptacles GFCI protected with weather-rated covers</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(4)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">AFCI on all 120V, 15/20A branch circuits in lounge, meeting room, library</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.12(B)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All GFCI reset buttons in readily accessible locations</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8</a></div></div></div>
+  </div>
+</div>
+
+<!-- LIGHTING -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Electrical — Lighting</span>
+    <span class="section-meta"><span id="count-light"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-light">
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All installed lighting high-efficacy (LED); no screw-based bulbs in recessed cans</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-energy-code-2022/subchapter-4-nonresidential-and-hotel-motel-occupancies-mandatory-requirements-for-lighting-systems-and-equipment-and-electrical-power-distribution-systems/section-140-6-lighting-systems#140-6" target="_blank">CEnC §140.6</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Occupancy or vacancy sensors in all bathrooms — automatic-off</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-energy-code-2022/subchapter-4-nonresidential-and-hotel-motel-occupancies-mandatory-requirements-for-lighting-systems-and-equipment-and-electrical-power-distribution-systems/section-130-1-mandatory-requirements-for-lighting-controls#130-1" target="_blank">CEnC §130.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Nonresidential space lighting controls include automatic shutoff</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-energy-code-2022/subchapter-4-nonresidential-and-hotel-motel-occupancies-mandatory-requirements-for-lighting-systems-and-equipment-and-electrical-power-distribution-systems/section-130-1-mandatory-requirements-for-lighting-controls#130-1" target="_blank">CEnC §130.1(a)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Indoor sign lighting (non-exit) on automatic time-switch control</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-energy-code-2022/subchapter-4-nonresidential-and-hotel-motel-occupancies-mandatory-requirements-for-lighting-systems-and-equipment-and-electrical-power-distribution-systems/section-130-1-mandatory-requirements-for-lighting-controls#130-1" target="_blank">CEnC §130.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Lighting acceptance testing forms (CF-2R/CF-3R) completed and on file</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-energy-code-2022/subchapter-4-nonresidential-and-hotel-motel-occupancies-mandatory-requirements-for-lighting-systems-and-equipment-and-electrical-power-distribution-systems" target="_blank">CEnC §130.4</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">At least one lighting outlet in every bathroom, corridor, and utility space</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.70</a></div></div></div>
+  </div>
+</div>
+
+<!-- PLUMBING -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Plumbing — All Wet Walls</span>
+    <span class="section-meta"><span id="count-plumb"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-plumb">
+    <div class="subsection-label">Lounge</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Ice machine — indirect drain to floor sink; air gap ≥ 2× pipe diameter</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/8/indirect-wastes#801" target="_blank">CPC §801.3.3</a><a class="code-ref" href="https://law.justia.com/codes/california/code-hsc/division-104/part-7/chapter-7/article-1/section-114193/" target="_blank">H&amp;S §114193(a)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Lounge sink — hot/cold supply, shutoffs accessible, drain and P-trap, no leaks</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/6/water-supply-and-distribution#605" target="_blank">CPC §605.1</a><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/10/traps-and-interceptors#1007" target="_blank">CPC §1007.0</a></div></div></div>
+
+    <div class="subsection-label">Break Room</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Dishwasher — drain looped high (anti-siphon); outlet adjacent to unit; GFCI protected</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/8/indirect-wastes#807" target="_blank">CPC §807.0</a><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(7)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Break room sink — hot/cold supply, shutoffs, drain, P-trap, no leaks</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/6/water-supply-and-distribution#605" target="_blank">CPC §605.1</a><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/10/traps-and-interceptors#1007" target="_blank">CPC §1007.0</a></div></div></div>
+
+    <div class="subsection-label">Restrooms — Both</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Toilets — supply, shutoff, flush tested; max 1.28 GPF</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/4/plumbing-fixtures-and-fixture-fittings#407" target="_blank">CPC §407.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Sinks — hot/cold supply; max 0.5 GPM faucet flow</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/4/plumbing-fixtures-and-fixture-fittings#416" target="_blank">CPC §416.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Floor finish hard/nonabsorbent; extends 5" up wall; wall finish impervious to 48" within 24" of any urinal</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/12/interior-environment#1210" target="_blank">CBC §1210.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Exhaust fans — minimum 50 CFM each; separately switched; ducted to exterior</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/4/ventilation-air-quality#402" target="_blank">CMC §402.0</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">GFCI outlet at sink in each restroom</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-electrical-code-2022/chapter/2/wiring-and-protection#210" target="_blank">CEC §210.8(B)(1)</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Single-occupancy toilet facilities posted as all-gender — Santa Barbara local amendment</div><div class="refs"><a class="code-ref" href="https://ecode360.com/44107291" target="_blank">SB Ord. §422.2.1</a></div></div></div>
+
+    <div class="subsection-label">General</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Water heater permitted; pressure relief valve installed and piped to safe discharge</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/6/water-supply-and-distribution#608" target="_blank">CPC §608.3</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">No active leaks at any supply or drain connection</div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All cleanouts accessible and capped</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/7/sanitary-drainage#707" target="_blank">CPC §707.0</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Shutoff valves operable at each fixture</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/6/water-supply-and-distribution#605" target="_blank">CPC §605.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Backflow prevention assemblies installed where required</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/6/water-supply-and-distribution#603" target="_blank">CPC §603.0</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">All fixtures compliant with SB 407 water efficiency — replaced if within scope of work</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-plumbing-code-2022/chapter/4/plumbing-fixtures-and-fixture-fittings#420" target="_blank">CPC §420.2 / SB 407</a></div></div></div>
+  </div>
+</div>
+
+<!-- ADA -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">ADA / Title 24 Accessibility — CBC Ch. 11B</span>
+    <span class="section-meta"><span id="count-ada"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-ada">
+    <div class="subsection-label">Site &amp; Entry</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible route from public sidewalk/parking to entry; slope ≤ 1:20 (5%)</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-402" target="_blank">CBC §11B-402</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Entry door — minimum 32" clear opening; hardware operable with closed fist; max 5 lbf</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-404" target="_blank">CBC §11B-404</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible parking with ISA signage if parking provided on site</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-208" target="_blank">CBC §11B-208</a></div></div></div>
+
+    <div class="subsection-label">Interior</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible route throughout; min 36" clear width; 60" at turns</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-402" target="_blank">CBC §11B-402.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Thresholds ≤ 1/2" high; beveled if between 1/4" and 1/2"</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-404" target="_blank">CBC §11B-404.2.5</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible route does not pass through kitchens, storage, or restrooms</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-402" target="_blank">CBC §11B-402.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible seating in lounge — ambulatory and wheelchair positions</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-221" target="_blank">CBC §11B-221</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Bar/counter: accessible service portion at 28"–34" AFF</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-227" target="_blank">CBC §11B-227</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible route confirmed to all public areas: bar, meeting room, gallery</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-206" target="_blank">CBC §11B-206</a></div></div></div>
+
+    <div class="subsection-label">Restrooms</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Water closet centerline 17"–18" from side wall</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-604" target="_blank">CBC §11B-604.2</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">60" clearance perpendicular from side wall; 56" from rear wall at toilet</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-604" target="_blank">CBC §11B-604.3</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Grab bars — rear wall (36" min) and side wall (42" min) at water closet</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-604" target="_blank">CBC §11B-604.5</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">60" diameter wheelchair turning radius clear within each restroom</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-603" target="_blank">CBC §11B-603.2.1</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Door does not swing into required fixture clear floor space</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-603" target="_blank">CBC §11B-603.2.3</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Accessible lavatory — knee clearance below; lever/touch faucet; max 5 lbf activation</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-606" target="_blank">CBC §11B-606</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Mirror bottom edge ≤ 40" AFF (or full-length)</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-603" target="_blank">CBC §11B-603.3</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Toilet paper dispenser and accessories within reach range (15"–48" AFF)</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-604" target="_blank">CBC §11B-604.7</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Privacy latch operable without grasping or twisting</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-604" target="_blank">CBC §11B-604</a></div></div></div>
+
+    <div class="subsection-label">Signage</div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Tactile/Braille signs on all permanent rooms — restrooms, meeting room, all permanent spaces</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-703" target="_blank">CBC §11B-703.1–703.5</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Sign centerline at 60" AFF; mounted on latch side of door</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/11b/accessibility-to-public-buildings-public-accommodations-commercial-buildings-and-public-housing#11B-703" target="_blank">CBC §11B-703.4.2</a></div></div></div>
+  </div>
+</div>
+
+<!-- MECHANICAL -->
+<div class="section">
+  <div class="section-header" onclick="toggleSection(this)">
+    <span class="section-title">Mechanical &amp; Ventilation</span>
+    <span class="section-meta"><span id="count-mech"></span><span class="section-toggle">▾</span></span>
+  </div>
+  <div class="section-body" id="body-mech">
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Mechanical ventilation in all occupied spaces; min outdoor air per occupancy type</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/4/ventilation-air-quality#402" target="_blank">CMC §402.0</a><a class="code-ref" href="https://up.codes/viewer/california/ca-building-code-2022/chapter/12/interior-environment#1202" target="_blank">CBC §1202</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Bar/lounge exhaust hood if any heat-producing equipment installed</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/5/exhaust-systems#509" target="_blank">CMC §509</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Bathroom exhaust fans — minimum 50 CFM; ducted directly to exterior</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/4/ventilation-air-quality#402" target="_blank">CMC §402.0</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">HVAC equipment access panels clear; filters accessible</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-mechanical-code-2022/chapter/3/general-regulations#304" target="_blank">CMC §304</a></div></div></div>
+    <div class="item"><input type="checkbox" onchange="updateProgress()"><div class="item-content"><div class="item-text">Thermostat setback or programmable controls for nonresidential space</div><div class="refs"><a class="code-ref" href="https://up.codes/viewer/california/ca-energy-code-2022/subchapter-4-nonresidential-and-hotel-motel-occupancies-mandatory-requirements-for-lighting-systems-and-equipment-and-electrical-power-distribution-systems/section-120-2-mandatory-requirements-for-space-conditioning-systems#120-2" target="_blank">CEnC §120.2</a></div></div></div>
+  </div>
+</div>
+
+<div class="note-block">
+  All citations reference 2022 editions of CBC, CPC, CEC, and CMC as adopted by City of Santa Barbara per Ordinance No. 6093, effective January 2, 2026. Stamped permit set governs. Recommend CASp sign-off on ADA/Title 24 section prior to final. Code links open UpCodes — free public California Title 24 reference.
+</div>
+
+</div>
+
+<script>
+  function updateProgress() {
+    const all = document.querySelectorAll('input[type="checkbox"]');
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    const pct = all.length ? (checked.length / all.length * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = checked.length + ' / ' + all.length + ' complete';
+    all.forEach(cb => cb.closest('.item').classList.toggle('checked', cb.checked));
+
+    [
+      ['body-egress','count-egress'],
+      ['body-fire','count-fire'],
+      ['body-elec','count-elec'],
+      ['body-gfci','count-gfci'],
+      ['body-light','count-light'],
+      ['body-plumb','count-plumb'],
+      ['body-ada','count-ada'],
+      ['body-mech','count-mech'],
+    ].forEach(([bid, cid]) => {
+      const b = document.getElementById(bid);
+      if (!b) return;
+      const t = b.querySelectorAll('input[type="checkbox"]').length;
+      const d = b.querySelectorAll('input[type="checkbox"]:checked').length;
+      document.getElementById(cid).textContent = d + '/' + t;
+    });
+  }
+
+  function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.section-toggle');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    toggle.textContent = isOpen ? '▸' : '▾';
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
